@@ -99,7 +99,9 @@ export const ROUTES = {
     USERS: "/admin/users",
     COMPANIES: "/admin/companies",
     JOBS: "/admin/jobs",
+    AUDIT_LOGS: "/admin/audit-logs",
     REPORTS: "/admin/reports",
+    CATEGORIES: "/admin/categories",
     SETTINGS: "/admin/settings",
   },
 } as const

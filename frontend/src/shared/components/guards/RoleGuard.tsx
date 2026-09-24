@@ -21,7 +21,7 @@ interface RoleGuardProps {
 export function RoleGuard({ allowedRoles }: RoleGuardProps) {
   const { user } = useAuthStore()
 
-  const userRole = user?.role as AllowedRole | undefined
+  const userRole = user?.role
   const hasAccess = userRole != null && allowedRoles.includes(userRole)
 
   if (!hasAccess) {

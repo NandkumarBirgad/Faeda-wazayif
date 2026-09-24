@@ -43,6 +43,13 @@ import { UniversityDepartmentsPage } from "./features/university/pages/Universit
 import { UniversityOpportunitiesPage } from "./features/university/pages/UniversityOpportunitiesPage"
 import { ChatPage } from "./features/chat/pages/ChatPage"
 import { AdminLayout } from "./features/admin/layouts/AdminLayout"
+import { AdminDashboardPage } from "./features/admin/pages/AdminDashboardPage"
+import { AdminUsersPage } from "./features/admin/pages/AdminUsersPage"
+import { AdminJobsPage } from "./features/admin/pages/AdminJobsPage"
+import { AdminAuditLogsPage } from "./features/admin/pages/AdminAuditLogsPage"
+import { AdminReportsPage } from "./features/admin/pages/AdminReportsPage"
+import { AdminCategoriesPage } from "./features/admin/pages/AdminCategoriesPage"
+import { AdminSettingsPage } from "./features/admin/pages/AdminSettingsPage"
 
 // Guards
 import { AuthGuard } from "./shared/components/guards/AuthGuard"
@@ -188,7 +195,17 @@ function App() {
         {/* ── Admin Routes (/admin/*) ────────────────────────── */}
         <Route element={<AuthGuard />}>
           <Route element={<RoleGuard allowedRoles={["admin"]} />}>
-            <Route path="/admin/*" element={<AdminLayout />} />
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboardPage />} />
+              <Route path="dashboard" element={<AdminDashboardPage />} />
+              <Route path="users" element={<AdminUsersPage />} />
+              <Route path="jobs" element={<AdminJobsPage />} />
+              <Route path="audit-logs" element={<AdminAuditLogsPage />} />
+              <Route path="reports" element={<AdminReportsPage />} />
+              <Route path="categories" element={<AdminCategoriesPage />} />
+              <Route path="settings" element={<AdminSettingsPage />} />
+              <Route path="*" element={<Navigate to="/admin" replace />} />
+            </Route>
           </Route>
         </Route>
 
