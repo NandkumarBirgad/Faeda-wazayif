@@ -518,6 +518,94 @@ def delete_user(admin, target_type, target_id):
 
 
 # ------------------------------------------------------------------------------
+# 2.1 EXPLICIT COMPANY VERIFICATION ENDPOINT (/api/v1/admin/companies)
+# ------------------------------------------------------------------------------
+
+@admin_v1_bp.route('/companies', methods=['GET'])
+@admin_api_required('companies.verify')
+def list_companies_endpoint(admin):
+    """Direct endpoint to list companies with pending/verified filters."""
+    verified_filter = request.args.get('verified', 'all')
+    search = request.args.get('q', '').strip()
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 25, type=int)
+
+    query = Company.query.filter(Company.deleted_at.is_(None))
+    if verified_filter == 'true':
+        query = query.filter(Company.is_verified.is_(True))
+    elif verified_filter == 'false':
+        query = query.filter(Company.is_verified.is_(False))
+
+    if search:
+        query = query.filter(
+            or_(
+                Company.company_english_name.ilike(f'%{search}%'),
+                Company.company_arabic_name.ilike(f'%{search}%'),
+                Company.company_email.ilike(f'%{search}%')
+            )
+        )
+
+    pagination = query.order_by(desc(Company.timestamp)).paginate(
+        page=page, per_page=per_page, error_out=False
+    )
+
+    companies_list = []
+    for c in pagination.items:
+        companies_list.append({
+            "id": c.id,
+            "name": c.company_arabic_name or c.company_english_name,
+            "company_english_name": c.company_english_name,
+            "company_arabic_name": c.company_arabic_name,
+            "email": c.company_email,
+            "mobile": c.company_mobile or c.hr_mobile,
+            "location": f"{c.state or ''} {c.country or ''}".strip(),
+            "status": c.status or 'active',
+            "is_verified": bool(c.is_verified),
+            "verified_at": c.verified_at.isoformat() if hasattr(c, 'verified_at') and c.verified_at else None,
+            "created_at": c.timestamp.isoformat() if c.timestamp else None,
+            "logo": c.company_logo
+        })
+
+    return jsonify({
+        "success": True,
+        "companies": companies_list,
+        "total": pagination.total,
+        "page": page,
+        "per_page": per_page,
+        "total_pages": pagination.pages
+    })
+
+
+@admin_v1_bp.route('/companies/<int:company_id>/verify', methods=['POST', 'PATCH'])
+@admin_api_required('companies.verify')
+def verify_company_direct(admin, company_id):
+    """Direct endpoint to approve/verify a company."""
+    comp = Company.query.get_or_404(company_id)
+    data = request.get_json() or {}
+    is_verified = bool(data.get('is_verified', True))
+
+    comp.is_verified = is_verified
+    comp.verified_at = datetime.utcnow() if is_verified else None
+    db.session.commit()
+
+    company_name = comp.company_english_name or comp.company_arabic_name
+    log_action(
+        admin=admin,
+        action='verify_company',
+        target_type='company',
+        target_id=company_id,
+        details={"is_verified": is_verified, "company_name": company_name}
+    )
+
+    return jsonify({
+        "success": True,
+        "message": f"تم {'توثيق' if is_verified else 'إلغاء توثيق'} شركة {company_name} بنجاح",
+        "company_id": comp.id,
+        "is_verified": comp.is_verified
+    })
+
+
+# ------------------------------------------------------------------------------
 # 3. JOB POSTINGS MODERATION
 # ------------------------------------------------------------------------------
 
@@ -650,6 +738,7 @@ def delete_job(admin, job_id):
 # ------------------------------------------------------------------------------
 
 @admin_v1_bp.route('/audit-logs', methods=['GET'])
+@admin_v1_bp.route('/auditlogs', methods=['GET'])
 @admin_api_required('audit_logs')
 def list_audit_logs(admin):
     """List system audit logs with search and pagination."""
