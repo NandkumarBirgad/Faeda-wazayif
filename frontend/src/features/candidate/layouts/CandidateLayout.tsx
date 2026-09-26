@@ -28,6 +28,7 @@ import {
   ChevronRight,
   ChevronLeft,
 } from "lucide-react"
+import faedaWhiteLogo from "@/assets/logos/faeda_white_logo.png"
 import { useUnreadCount } from "@/features/chat/hooks/useChat"
 import { UnreadBadge } from "@/features/chat/components/UnreadBadge"
 
@@ -112,7 +113,7 @@ export function CandidateLayout() {
   return (
     <div className="min-h-screen bg-[#070b14] text-slate-100 flex flex-col font-sans selection:bg-primary/30">
       {/* ── Topbar / Header ────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-40 h-16 border-b border-slate-800/80 bg-[#0a101d]/90 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between">
+      <header className="sticky top-0 z-40 h-20 border-b border-slate-800/80 bg-[#0a101d]/90 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
           {/* Mobile menu trigger */}
           <button
@@ -124,22 +125,19 @@ export function CandidateLayout() {
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
-          {/* Logo brand */}
+          {/* Official Faeda Brand Logo */}
           <Link
             to={ROUTES.PUBLIC.HOME}
-            className="flex items-center gap-2.5 group focus:outline-none"
+            className="flex items-center gap-3 group focus:outline-none"
           >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary to-sky-400 flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-heading font-bold text-base text-white leading-tight tracking-tight">
-                فائدة <span className="text-primary text-xs font-semibold px-1.5 py-0.5 rounded-full bg-primary/10 border border-primary/20">مرشح</span>
-              </span>
-              <span className="text-[10px] text-slate-400 font-medium hidden sm:inline">
-                {t("candidate.shell.tagline")}
-              </span>
-            </div>
+            <img
+              src={faedaWhiteLogo}
+              alt="Faeda Jobs Logo"
+              className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            />
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary">
+              {isRTL ? "مرشح" : language === "hi" ? "उम्मीदवार" : "Candidate"}
+            </span>
           </Link>
         </div>
 
@@ -278,11 +276,15 @@ export function CandidateLayout() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
-                    <Sparkles className="w-4 h-4" />
-                  </div>
-                  <span className="font-bold text-white text-sm">مساحة المرشح</span>
+                <div className="flex items-center gap-2.5">
+                  <img
+                    src={faedaWhiteLogo}
+                    alt="Faeda Jobs Logo"
+                    className="h-8 w-auto object-contain"
+                  />
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary/15 border border-primary/30 text-primary">
+                    {isRTL ? "مرشح" : language === "hi" ? "उम्मीदवार" : "Candidate"}
+                  </span>
                 </div>
                 <button
                   type="button"

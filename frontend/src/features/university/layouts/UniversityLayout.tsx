@@ -23,6 +23,7 @@ import {
   ChevronRight,
   ChevronLeft,
 } from "lucide-react"
+import faedaWhiteLogo from "@/assets/logos/faeda_white_logo.png"
 
 export function UniversityLayout() {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -85,7 +86,7 @@ export function UniversityLayout() {
   return (
     <div className="min-h-screen bg-[#040711] text-slate-100 flex flex-col font-sans" dir={isRTL ? "rtl" : "ltr"}>
       {/* Top Bar for Desktop and Mobile */}
-      <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-slate-800/80 bg-[#060a16]/90 px-4 md:px-8 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 flex h-20 items-center justify-between border-b border-slate-800/80 bg-[#060a16]/90 px-4 md:px-8 backdrop-blur-xl">
         <div className="flex items-center gap-4">
           <button
             type="button"
@@ -96,19 +97,16 @@ export function UniversityLayout() {
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
-          <Link to={ROUTES.PUBLIC.HOME} className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-teal-500 text-white font-black text-lg shadow-md shadow-indigo-950/50">
-              ف
-            </div>
-            <span className="font-heading font-black text-lg tracking-tight text-white hidden sm:inline-block">
-              FAEDA <span className="text-xs font-semibold text-indigo-400">ACADEMIC</span>
+          <Link to={ROUTES.PUBLIC.HOME} className="flex items-center gap-3 group">
+            <img
+              src={faedaWhiteLogo}
+              alt="Faeda Jobs Logo"
+              className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            />
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-400">
+              {isRTL ? "جامعة" : language === "hi" ? "विश्वविद्यालय" : "University"}
             </span>
           </Link>
-
-          <span className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>{isRTL ? "بوابة الجامعات والمؤسسات التعليمية" : "University Portal"}</span>
-          </span>
         </div>
 
         {/* Right Topbar Controls */}
