@@ -4153,5 +4153,90 @@ def api_candidate_cancel_invitation(invitation_id):
     return jsonify({"success": True, "message": "تم إلغاء الدعوة بنجاح"})
 
 
+@customer.route('/api/v1/portfolio/<username>', methods=['GET'])
+def api_get_public_candidate_portfolio(username):
+    """
+    Return candidate public portfolio by username (user_id, id, or fullname slug).
+    Available to all visitors, recruiters, and companies.
+    Respects candidate privacy settings.
+    """
+    clean_username = str(username).strip()
+    cust = None
 
+    # 1. Match by user_id
+    cust = Customers.query.filter_by(user_id=clean_username).first()
 
+    # 2. Match by id if numeric
+    if not cust and clean_username.isdigit():
+        cust = Customers.query.get(int(clean_username))
+
+    # 3. Match by fullname if not found
+    if not cust:
+        cleaned_name = clean_username.replace('-', ' ').replace('_', ' ').strip()
+        cust = Customers.query.filter(Customers.fullname.ilike(f"%{cleaned_name}%")).first()
+
+    if not cust:
+        return jsonify({"message": "لم يتم العثور على المرشح أو الملف غير متاح"}), 404
+
+    # If status is banned or suspended, restrict access
+    if getattr(cust, 'status', 'active') in ['banned', 'suspended']:
+        return jsonify({"message": "هذا الحساب غير نشط حالياً"}), 403
+
+    visibility = getattr(cust, 'visibility', 'public') or 'public'
+    is_owner = ('user_id' in session and str(session['user_id']) == str(cust.id))
+    is_employer = ('session_company' in session)
+
+    if visibility == 'private' and not is_owner and not is_employer:
+        return jsonify({
+            "isPrivate": True,
+            "message": "هذا الملف المهني خاص بناءً على رغبة صاحبه",
+            "fullName": cust.fullname or "مرشح مسجل",
+            "avatarUrl": f"/download_image/{cust.img}" if cust.img else None,
+            "headline": cust.preferred_field_of_work or "محترف رقمي"
+        }), 200
+
+    profile_dict = cust.to_candidate_profile_dict()
+
+    portfolio_data = {
+        "id": cust.id,
+        "userId": cust.user_id,
+        "fullName": cust.fullname or "",
+        "headline": cust.preferred_field_of_work or (cust.about[:80] + "..." if cust.about else "محترف رقمي"),
+        "about": cust.about or "",
+        "email": cust.email if (visibility == 'public' or is_employer or is_owner) else None,
+        "mobile": cust.mobile if (is_employer or is_owner) else None,
+        "country": cust.country or "المملكة العربية السعودية",
+        "government": cust.government or "",
+        "avatarUrl": f"/download_image/{cust.img}" if cust.img else None,
+        "isVerified": bool(cust.is_verified),
+        "verifiedAt": cust.verified_at.isoformat() if cust.verified_at else None,
+        "education": {
+            "qualification": cust.educational_qualification or "",
+            "university": cust.university or "",
+            "department": cust.department_university or "",
+            "graduationDate": cust.graduation_date.isoformat() if cust.graduation_date else None,
+            "gpa": cust.gpa or "",
+            "status": cust.education_statue or ""
+        },
+        "experienceYears": cust.years_of_skills or "1-3 سنوات",
+        "preferredField": cust.preferred_field_of_work or "",
+        "workType": cust.work_type or "دوام كامل",
+        "workStyle": getattr(cust, 'work_style', 'هجين') or "مرن",
+        "expectedSalary": cust.expected_salary if (is_employer or is_owner) else None,
+        "cvUrl": f"/download_cv/{cust.cv}" if cust.cv else None,
+        "skills": profile_dict.get('skills', []),
+        "languages": profile_dict.get('languages', []),
+        "projects": profile_dict.get('projects', []),
+        "certifications": profile_dict.get('certifications', []),
+        "atsScore": profile_dict.get('ats_score', 85),
+        "stats": {
+            "projectsCount": len(profile_dict.get('projects', [])),
+            "certificationsCount": len(profile_dict.get('certifications', [])),
+            "skillsCount": len(profile_dict.get('skills', [])),
+            "completionRate": profile_dict.get('completion', {}).get('percentage', 80)
+        },
+        "visibility": visibility,
+        "isOwner": is_owner
+    }
+
+    return jsonify(portfolio_data), 200

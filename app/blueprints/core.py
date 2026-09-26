@@ -357,4 +357,442 @@ def api_submit_contact():
         return jsonify({"success": True, "message": "تم استلام رسالتك بنجاح. شكرًا لتواصلك معنا."})
     except Exception as e:
         db.session.rollback()
-        return jsonify({"success": False, "message": "تعذر إرسال الرسالة حالياً. حاول مرة أخرى."}), 500
+        return jsonify({"success": False, "message": "تعذر إرسال الرسالة حالياً. حاول مرة أخرى."}), 500
+
+
+# ── Career Articles & Insights REST Endpoints ────────────────────────────────
+CAREER_POSTS_DATA = [
+    {
+        "id": 1,
+        "title": "دليلك الشامل لاجتياز أنظمة الفرز الذكي (ATS) والوصول إلى المقابلات الشخصية",
+        "slug": "ats-resume-optimization-guide-2026",
+        "summary": "كيف تصيغ سيرتك الذاتية بلغة تفهمها خوارزميات الذكاء الاصطناعي ومسؤولو التوظيف في السوق السعودي؟ 5 استراتيجيات عملية معتمدة.",
+        "content": """تعتمد اليوم أكثر من 85% من كبرى الشركات السعودية والدولية على أنظمة التتبع الآلي للمرشحين (ATS). وظيفة هذه الأنظمة هي فلترة مئات السير الذاتية وفرزها تلقائياً قبل أن تصل إلى عين مسؤول الموارد البشرية.
+
+### 1. ابتعد عن التنسيقات المعقدة والجداول
+العديد من الباحثين عن عمل يستخدمون قوالب مليئة بالجداول، الرسوم البيانية والأعمدة المزدوجة ظناً منهم أنها أكثر جاذبية. الحقيقة أن معظم محركات ATS تفشل في قراءة النصوص داخل الجداول أو الصور.
+- استخدم قالباً أحادي العمود بخطوط نظامية واضحة (مثل Cairo أو Calibri).
+- تجنب وضع بيانات الاتصال في الترويسة (Header) أو التذييل (Footer).
+
+### 2. التوافق الدلالي مع الكلمات المفتاحية
+لا تكتفِ بوضع قائمة مهارات عامة؛ بل ادرس الوصف الوظيفي بدقة.
+- إذا طلبت الشركة "PostgreSQL" و "FastAPI"، احرص على ورود هذه المصطلحات حرفياً في سياق مشاريعك السابقة.
+- ادمج المهارات داخل إنجازاتك الواقعية، ولا تتركها مجرد قائمة منفصلة.
+
+### 3. صياغة الإنجازات بنموذج STAR والنتائج الرقمية
+بدلاً من كتابة "مسؤول عن تطوير الواجهات"، اكتب:
+> "قمت بإعادة بناء واجهة المستخدم باستخدام React و TypeScript مما أدى إلى خفض زمن التحميل بنسبة 40% وزيادة معدل التحويل 18%."
+الأرقام والنسب هي لغة يثق بها مسؤولو التوظيف وتبرز قيمتك السوقية المضافة.
+
+### 4. حفظ الملف بالصيغة المثلى
+دائماً احفظ ملف سيرتك بصيغة PDF قابلة للنسخ النصي (Selectable Text)، وتأكد من أن حجم الملف لا يتجاوز 2 ميجابايت.""",
+        "category": "السير الذاتية وATS",
+        "tags": ["ATS", "السيرة الذاتية", "التوظيف", "الذكاء الاصطناعي"],
+        "coverImage": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=1200&h=600&fit=crop",
+        "publishedAt": "2026-09-24T10:00:00Z",
+        "readTime": "5 دقائق",
+        "views": 3840,
+        "likes": 428,
+        "isLiked": False,
+        "author": {
+            "name": "أحمد الفارسي",
+            "title": "خبير استقطاب المواهب التقنية | مستشار مهني",
+            "avatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop",
+            "isVerified": True,
+            "username": "ahmed-alfarsi"
+        },
+        "comments": [
+            {
+                "id": 101,
+                "author": "سارة القحطاني",
+                "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
+                "text": "مقال دقيق وواقعي جداً! بالفعل واجهت رفضاً آلياً سابقاً واكتشفت أن القالب ثنائي الأعمدة كان السبب.",
+                "time": "منذ يومين"
+            },
+            {
+                "id": 102,
+                "author": "خالد بن عبد الرحمن",
+                "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop",
+                "text": "صياغة الإنجازات الرقمية باستخدام نموذج STAR أحدثت فرقاً جذرياً في عدد المقابلات التي تلقيتها.",
+                "time": "منذ يوم"
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "title": "القيمة السوقية والتفاوض على الرواتب: دليلك لعرض وظيفي عادل في 2026",
+        "slug": "salary-negotiation-market-value-2026",
+        "summary": "فهم معايير تسعير الكفاءات في السوق السعودي، وكيف تستند على مؤشرات حقيقية لحساب قيمتك السوقية وبناء موقف تفاوضي قوي.",
+        "content": """كثير من المهنيين يتفاجؤون عندما يُطلب منهم تحديد "الراتب المتوقع" أثناء المقابلة الأولى. الإجابة العشوائية إما أن تحرمك من عرض مستحق أو تستبعدك مبكراً.
+
+### معايير تحديد القيمة السوقية في السوق السعودي
+لا يقاس الراتب بسنوات الخبرة المجردة فقط، بل بعدة محاور متداخلة:
+1. **الندرة التقنية ومستوى التخصص**: المهارات المرتبطة بهندسة البيانات الضخمة، والذكاء الاصطناعي التوليدي، وتطوير البنية التحتية السحابية تشهد طلباً يفوق المعروض.
+2. **الأثر المالي المباشر**: قدرتك على تسريع تسليم المشاريع أو خفض التكاليف التشغيلية.
+3. **حجم واستقرار المنشأة**: الشركات التقنية الناشئة قد تقدم حصصاً أو مرونة أعلى، بينما المؤسسات الكبرى والبنوك تقدم حزم بدلات شاملة (سكن، تعليم، تأمين لكبار الشخصيات).
+
+### استراتيجية التفاوض المستندة للبيانات
+- لا تذكر رقماً منفرداً؛ اعرض نطاقاً سعرياً (Range) يعتمد على المسؤوليات ونظام العمل (حضوري أو عن بعد).
+- اطلب مهلة 24-48 ساعة لدراسة العرض المالي وتفاصيل المزايا قبل الرد الرسمي.
+- تفاوض على الحزمة ككل: الراتب الأساسي، ساعات العمل المرنة، ميزانية التدريب والتطوير، وبونص الأداء السنوي.""",
+        "category": "السوق والرواتب",
+        "tags": ["الرواتب", "التفاوض", "القيمة السوقية", "سوق العمل السعودي"],
+        "coverImage": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=1200&h=600&fit=crop",
+        "publishedAt": "2026-09-22T14:30:00Z",
+        "readTime": "6 دقائق",
+        "views": 4920,
+        "likes": 612,
+        "isLiked": True,
+        "author": {
+            "name": "سارة الغامدي",
+            "title": "رئيسة قسم استقطاب المواهب التنفيذية | مستشارة موارد بشرية",
+            "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop",
+            "isVerified": True,
+            "username": "sara-alghamdi"
+        },
+        "comments": [
+            {
+                "id": 201,
+                "author": "تركي العتيبي",
+                "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
+                "text": "التفاوض على باقة المزايا ككل وليس الراتب الأساسي فقط نقطة محورية يغفل عنها الكثيرون.",
+                "time": "منذ 3 أيام"
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "title": "التوظيف الجماعي: لماذا تفضل الشركات استقطاب فرق تقنية جاهزة؟",
+        "slug": "team-hiring-trends-mena-2026",
+        "summary": "نقلة نوعية في منهجيات التوظيف الحديثة: تقليل فترة التأهيل بنسبة 70% وتسليم المنتجات بأعلى تناغم وتكامل بين الأعضاء.",
+        "content": """عندما تقوم شركة بتعيين 5 مهندسين غرباء عن بعضهم، فإنها تستغرق ما بين 3 إلى 6 أشهر فقط في مرحلة "بناء التناغم" (Team Dynamics) وفهم أسلوب التواصل المشترك.
+
+### ميزة استقطاب الفرق المترابطة (Team Marketplace)
+1. **انعدام فترة التناغم الأولي**: الفريق الذي عمل معاً على مشاريع سابقة يبدأ بالإنتاجية القصوى من الأسبوع الأول.
+2. **تكامل المهارات المصقول**: مصمم المنتج يعرف كيف يفكر مطور الواجهة، ومطور الواجهة متفاهم تماماً مع مهندس الواجهات الخلفية وقواعد البيانات.
+3. **تقليل مخاطر التسرب الوظيفي**: الفرق المتجانسة تتمتع بروح معنوية عالية ومناخ عمل إيجابي يقلل رغبة الأفراد في المغادرة المبكرة.
+
+منصة فائدة تقود هذا النموذج الرائد في المنطقة عبر إتاحة ملفات تعريف مشتركة للفرق المتخصصة للتقديم الجماعي على كبرى المشاريع والمناقصات التقنية.""",
+        "category": "فرق العمل",
+        "tags": ["فرق العمل", "التوظيف الجماعي", "الإنتاجية", "الشركات الناشئة"],
+        "coverImage": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&h=600&fit=crop",
+        "publishedAt": "2026-09-20T08:15:00Z",
+        "readTime": "4 دقائق",
+        "views": 2750,
+        "likes": 319,
+        "isLiked": False,
+        "author": {
+            "name": "م. فيصل الشمري",
+            "title": "مدير الهندسة البرمجية ومؤسس تقني",
+            "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop",
+            "isVerified": True,
+            "username": "faisal-alshammari"
+        },
+        "comments": []
+    },
+    {
+        "id": 4,
+        "title": "وظائف المستقبل في ظل الذكاء الاصطناعي ورؤية السعودية 2030",
+        "slug": "future-jobs-ai-saudi-vision-2030",
+        "summary": "تحليل لأهم المهن الناشئة والمجالات الاستراتيجية الأكثر نمواً في المملكة، وكيف تؤهل نفسك لتكون ضمن الكفاءات المطلوبة عالمياً.",
+        "content": """تشهد المملكة العربية السعودية تحولاً رقمياً واقتصادياً غير مسبوق في إطار رؤية 2030. المشاريع الكبرى مثل نيوم، البحر الأحمر، والقدية تفتح آلاف الفرص النوعية.
+
+### أهم المسارات الوظيفية الصاعدة:
+- **هندسة الذكاء الاصطناعي وتعلم الآلة التطبيقي (Applied AI Engineering)**: الانتقال من الأبحاث النظرية إلى بناء منتجات ذكية تخدم قطاعات الطاقة، الصحة، والخدمات اللوجستية.
+- **الأمن السيبراني والامتثال السحابي**: مع توسع البنية التحتية الرقمية، أصبح تأمين البيانات الحساسة أولوية سيادية للمؤسسات.
+- **إدارة منتجات التكنولوجيا المالية (FinTech PM)**: القطاع المالي السعودي من بين الأسرع نمواً في الابتكار والمدفوعات الفورية.
+
+### كيف تجهز نفسك؟
+لا تنتظر التخرج أو الشهادات التقليدية؛ ابنِ مشاريع واقعية مفتوحة المصدر، وتعلّم كيفية توظيف أدوات الذكاء الاصطناعي لرفع كفاءتك اليومية أضعافاً مضاعفة.""",
+        "category": "رؤية 2030",
+        "tags": ["رؤية 2030", "الذكاء الاصطناعي", "نيوم", "مستقبل العمل"],
+        "coverImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&h=600&fit=crop",
+        "publishedAt": "2026-09-18T12:00:00Z",
+        "readTime": "7 دقائق",
+        "views": 5600,
+        "likes": 845,
+        "isLiked": False,
+        "author": {
+            "name": "د. عبد الله المالكي",
+            "title": "باحث ومستشار في الذكاء الاصطناعي والتحول الرقمي",
+            "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop",
+            "isVerified": True,
+            "username": "dr-abdullah"
+        },
+        "comments": []
+    },
+    {
+        "id": 5,
+        "title": "التحول من مطور مبتدئ إلى محترف: 7 مهارات جوهرية لا تُدرس في الجامعات",
+        "slug": "from-junior-to-senior-engineer",
+        "summary": "ما يميز المطور المحترف ليس مجرد كتابة الكود، بل التفكير في البنية المعمارية، التواصل، وقابلية الصيانة والتوسع.",
+        "content": """عندما تبدأ مسيرتك المهنية، تظن أن النجاح هو إنهاء التذكرة (Ticket) بأي طريقة. ولكن مع التدرج إلى رتبة مهندس أول (Senior Engineer)، تتغير المعايير تماماً.
+
+### 1. الكود المقروء قبل الكود الذكي
+الكود الذكي المعقد غالباً ما يكون كابوساً للصيانة. المطور العظيم يكتب كوداً بسيطاً، موثقاً، ومفهوماً لأي زميل جديد ينضم للفريق.
+
+### 2. فهم قيمة العمل التجاري (Business Value)
+قبل أن تبدأ بكتابة سطر واحد، اسأل نفسك:
+- كيف يخدم هذا الميزة العميل النهائي؟
+- هل الحل المقترح يستحق الوقت المستثمر فيه تقنياً ومالياً؟
+
+### 3. التواصل وإدارة التوقعات
+القدرة على شرح المشاكل التقنية المعقدة للمدراء غير التقنيين باحترافية هي المهارة الذهبية التي تفتح لك أبواب الترقية السريعة.""",
+        "category": "التطوير المهني",
+        "tags": ["التطوير المهني", "هندسة البرمجيات", "نصائح تقنية", "القيادة التقنية"],
+        "coverImage": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1200&h=600&fit=crop",
+        "publishedAt": "2026-09-15T09:30:00Z",
+        "readTime": "5 دقائق",
+        "views": 3120,
+        "likes": 390,
+        "isLiked": False,
+        "author": {
+            "name": "نورة العتيبي",
+            "title": "مهندسة معمارية للبنية السحابية | مرشدة تقنية",
+            "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop",
+            "isVerified": True,
+            "username": "noura-alotaibi"
+        },
+        "comments": []
+    }
+]
+
+TRENDING_TOPICS = [
+    {"id": 1, "title": "#SaudiVision2030", "posts": "45.2K", "category": "رؤية 2030"},
+    {"id": 2, "title": "#ATS_Optimization", "posts": "28.4K", "category": "السير الذاتية وATS"},
+    {"id": 3, "title": "#Salary_Benchmarks_2026", "posts": "19.8K", "category": "السوق والرواتب"},
+    {"id": 4, "title": "#Team_Marketplace", "posts": "14.1K", "category": "فرق العمل"},
+    {"id": 5, "title": "#AI_Recruitment", "posts": "32.6K", "category": "الذكاء الاصطناعي"},
+]
+
+SUGGESTED_AUTHORS = [
+    {
+        "name": "أحمد الفارسي",
+        "title": "خبير استقطاب المواهب التقنية",
+        "avatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop",
+        "username": "ahmed-alfarsi",
+        "articlesCount": 14,
+        "isVerified": True
+    },
+    {
+        "name": "سارة الغامدي",
+        "title": "مستشارة توظيف وموارد بشرية",
+        "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
+        "username": "sara-alghamdi",
+        "articlesCount": 21,
+        "isVerified": True
+    },
+    {
+        "name": "د. عبد الله المالكي",
+        "title": "باحث ومستشار الذكاء الاصطناعي",
+        "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop",
+        "username": "dr-abdullah",
+        "articlesCount": 9,
+        "isVerified": True
+    }
+]
+
+
+@core_bp.route('/api/v1/posts', methods=['GET'])
+def api_get_posts():
+    """
+    Return paginated and filtered career articles and insights.
+    Query params: search, category, sort ('newest', 'popular', 'likes'), page, pageSize.
+    """
+    from datetime import datetime
+    search = request.args.get('search', '').strip().lower()
+    category = request.args.get('category', '').strip()
+    sort_by = request.args.get('sort', 'newest')
+
+    filtered = CAREER_POSTS_DATA.copy()
+
+    if category and category != 'all' and category != 'الكل':
+        filtered = [p for p in filtered if p['category'] == category or category in p['tags']]
+
+    if search:
+        filtered = [
+            p for p in filtered
+            if search in p['title'].lower()
+            or search in p['summary'].lower()
+            or search in p['author']['name'].lower()
+            or any(search in t.lower() for t in p['tags'])
+        ]
+
+    # Sorting
+    if sort_by == 'popular':
+        filtered.sort(key=lambda x: x.get('views', 0), reverse=True)
+    elif sort_by == 'likes':
+        filtered.sort(key=lambda x: x.get('likes', 0), reverse=True)
+    else:  # newest
+        filtered.sort(key=lambda x: x.get('publishedAt', ''), reverse=True)
+
+    page = max(1, request.args.get('page', 1, type=int))
+    page_size = min(50, max(1, request.args.get('pageSize', 10, type=int)))
+    total = len(filtered)
+    start_idx = (page - 1) * page_size
+    end_idx = start_idx + page_size
+    items = filtered[start_idx:end_idx]
+
+    categories_list = [
+        {"name": "الكل", "key": "all", "count": len(CAREER_POSTS_DATA)},
+        {"name": "السير الذاتية وATS", "key": "السير الذاتية وATS", "count": sum(1 for p in CAREER_POSTS_DATA if p['category'] == "السير الذاتية وATS")},
+        {"name": "السوق والرواتب", "key": "السوق والرواتب", "count": sum(1 for p in CAREER_POSTS_DATA if p['category'] == "السوق والرواتب")},
+        {"name": "فرق العمل", "key": "فرق العمل", "count": sum(1 for p in CAREER_POSTS_DATA if p['category'] == "فرق العمل")},
+        {"name": "رؤية 2030", "key": "رؤية 2030", "count": sum(1 for p in CAREER_POSTS_DATA if p['category'] == "رؤية 2030")},
+        {"name": "التطوير المهني", "key": "التطوير المهني", "count": sum(1 for p in CAREER_POSTS_DATA if p['category'] == "التطوير المهني")},
+    ]
+
+    return jsonify({
+        "posts": items,
+        "total": total,
+        "page": page,
+        "pageSize": page_size,
+        "totalPages": max(1, (total + page_size - 1) // page_size),
+        "categories": categories_list,
+        "trendingTopics": TRENDING_TOPICS,
+        "suggestedAuthors": SUGGESTED_AUTHORS
+    }), 200
+
+
+@core_bp.route('/api/v1/posts/<int:post_id>', methods=['GET'])
+def api_get_post_detail(post_id):
+    """Return full single article detail with comments and related articles."""
+    post = next((p for p in CAREER_POSTS_DATA if p['id'] == post_id), None)
+    if not post:
+        return jsonify({"message": "المقال غير موجود أو تم حذفه"}), 404
+
+    # Increment view count
+    post['views'] = post.get('views', 0) + 1
+
+    # Related articles
+    related = [
+        {
+            "id": p['id'],
+            "title": p['title'],
+            "summary": p['summary'],
+            "coverImage": p['coverImage'],
+            "category": p['category'],
+            "readTime": p['readTime'],
+            "publishedAt": p['publishedAt'],
+            "author": p['author']
+        }
+        for p in CAREER_POSTS_DATA
+        if p['id'] != post_id and (p['category'] == post['category'] or any(t in post['tags'] for t in p['tags']))
+    ][:3]
+
+    return jsonify({
+        "post": post,
+        "related": related
+    }), 200
+
+
+@core_bp.route('/api/v1/posts', methods=['POST'])
+def api_create_post():
+    """Create a new article or professional community post."""
+    from datetime import datetime
+    data = request.get_json() or {}
+    title = (data.get('title') or '').strip()
+    content = (data.get('content') or '').strip()
+    category = (data.get('category') or 'التطوير المهني').strip()
+    summary = (data.get('summary') or '').strip()
+    cover_image = data.get('coverImage') or "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1200&h=600&fit=crop"
+    tags = data.get('tags') or [category]
+
+    if not title or not content:
+        return jsonify({"message": "العنوان والمحتوى مطلوبان لنشر المقال"}), 400
+
+    author_name = data.get('authorName') or "مشارك متميز"
+    author_title = data.get('authorTitle') or "عضو مجتمع فائدة"
+    author_username = data.get('authorUsername') or "community-member"
+
+    # If logged in as customer, use candidate details
+    if 'session_customer' in session and 'user_id' in session:
+        from services.customer import Customers
+        cand = Customers.query.get(session['user_id'])
+        if cand:
+            author_name = cand.fullname or author_name
+            author_title = cand.preferred_field_of_work or author_title
+            author_username = cand.user_id or author_username
+
+    new_id = max(p['id'] for p in CAREER_POSTS_DATA) + 1 if CAREER_POSTS_DATA else 1
+    new_post = {
+        "id": new_id,
+        "title": title,
+        "slug": f"post-{new_id}",
+        "summary": summary or (content[:150] + "..."),
+        "content": content,
+        "category": category,
+        "tags": tags,
+        "coverImage": cover_image,
+        "publishedAt": datetime.utcnow().isoformat() + "Z",
+        "readTime": f"{max(2, len(content.split()) // 150)} دقائق",
+        "views": 1,
+        "likes": 0,
+        "isLiked": False,
+        "author": {
+            "name": author_name,
+            "title": author_title,
+            "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop",
+            "isVerified": True,
+            "username": author_username
+        },
+        "comments": []
+    }
+
+    CAREER_POSTS_DATA.insert(0, new_post)
+    return jsonify({"success": True, "post": new_post, "message": "تم نشر المقال بنجاح!"}), 201
+
+
+@core_bp.route('/api/v1/posts/<int:post_id>/like', methods=['POST'])
+def api_toggle_like_post(post_id):
+    """Toggle like on an article."""
+    post = next((p for p in CAREER_POSTS_DATA if p['id'] == post_id), None)
+    if not post:
+        return jsonify({"message": "المقال غير موجود"}), 404
+
+    post['isLiked'] = not post.get('isLiked', False)
+    if post['isLiked']:
+        post['likes'] = post.get('likes', 0) + 1
+    else:
+        post['likes'] = max(0, post.get('likes', 1) - 1)
+
+    return jsonify({"success": True, "likes": post['likes'], "isLiked": post['isLiked']}), 200
+
+
+@core_bp.route('/api/v1/posts/<int:post_id>/comments', methods=['POST'])
+def api_add_post_comment(post_id):
+    """Add a comment to an article."""
+    post = next((p for p in CAREER_POSTS_DATA if p['id'] == post_id), None)
+    if not post:
+        return jsonify({"message": "المقال غير موجود"}), 404
+
+    data = request.get_json() or {}
+    text = (data.get('text') or '').strip()
+    if not text:
+        return jsonify({"message": "نص التعليق مطلوب"}), 400
+
+    author_name = (data.get('author') or '').strip() or "زائر مهتم"
+    avatar = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop"
+
+    if 'session_customer' in session and 'user_id' in session:
+        from services.customer import Customers
+        cand = Customers.query.get(session['user_id'])
+        if cand:
+            author_name = cand.fullname or author_name
+            if cand.img:
+                avatar = f"/download_image/{cand.img}"
+
+    new_comment = {
+        "id": len(post.get('comments', [])) + 1,
+        "author": author_name,
+        "avatar": avatar,
+        "text": text,
+        "time": "الآن"
+    }
+
+    if 'comments' not in post:
+        post['comments'] = []
+    post['comments'].append(new_comment)
+
+    return jsonify({"success": True, "comment": new_comment, "commentsCount": len(post['comments'])}), 201
+

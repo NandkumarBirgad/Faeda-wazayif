@@ -24,6 +24,7 @@ import {
   ShieldCheck,
   Globe,
   Sparkles,
+  TrendingUp,
   ChevronRight,
   ChevronLeft,
 } from "lucide-react"
@@ -49,6 +50,13 @@ export function CandidateLayout() {
       label: t("candidate.shell.nav.overview"),
       isPrimary: true,
       end: true,
+    },
+    {
+      to: ROUTES.CANDIDATE.MARKET_VALUE,
+      icon: TrendingUp,
+      label: language === "ar" ? "حاسبة القيمة السوقية" : language === "hi" ? "बाजार मूल्य कैलकुलेटर" : "Market Value Calculator",
+      isPrimary: true,
+      end: false,
     },
     {
       to: ROUTES.CANDIDATE.PROFILE,

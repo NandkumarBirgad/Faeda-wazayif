@@ -22,7 +22,7 @@ interface MarketValueCardProps {
 }
 
 export function MarketValueCard({ marketValue }: MarketValueCardProps) {
-  const { t, isRTL } = useTranslation()
+  const { t, isRTL, language } = useTranslation()
 
   const isAvailable = marketValue.available && marketValue.value !== null
   const formattedValue = isAvailable && marketValue.value
@@ -178,11 +178,17 @@ export function MarketValueCard({ marketValue }: MarketValueCardProps) {
       {/* Footer / CTA & Transparent Disclaimer */}
       <div className="pt-4 border-t border-slate-800/80 space-y-3">
         <Link
-          to={ROUTES.CANDIDATE.PROFILE}
+          to={ROUTES.CANDIDATE.MARKET_VALUE}
           className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 text-emerald-300 text-xs font-bold transition-all group"
         >
           <Sparkles className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
-          <span>{t("candidate.dashboard.marketValue.improveBtn")}</span>
+          <span>
+            {language === "ar"
+              ? "تقرير القيمة السوقية التفصيلي والآلة الحاسبة"
+              : language === "hi"
+              ? "विस्तृत बाजार रिपोर्ट और कैलकुलेटर देखें"
+              : "View Detailed Market Report & Calculator"}
+          </span>
           {isRTL ? <ChevronLeft className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
         </Link>
 

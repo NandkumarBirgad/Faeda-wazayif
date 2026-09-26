@@ -7,7 +7,7 @@
 import { useState } from "react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
 import { motion } from "framer-motion"
-import { Lock, Mail, Eye, EyeOff, Globe, ArrowLeft, ArrowRight, AlertCircle, Loader2 } from "lucide-react"
+import { Lock, Mail, Eye, EyeOff, Globe, ArrowLeft, ArrowRight, AlertCircle, Loader2, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { GlassCard } from "@/components/ui/glass-card"
 import { useAuthStore } from "@/store/auth.store"
@@ -85,6 +85,18 @@ export function Login() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleQuickDemoLogin = (role: "candidate" | "company") => {
+    const demoUser = {
+      id: "candidate-demo-1",
+      email: "ahmed.alfarsi@faeda.sa",
+      name: "Ahmed Al-Farsi",
+      role: role,
+    }
+    loginStore(demoUser, "demo-candidate-token")
+    const rawFrom = (location.state as { from?: string })?.from
+    navigate(rawFrom || (role === "candidate" ? ROUTES.CANDIDATE.MARKET_VALUE : ROUTES.COMPANY.DASHBOARD), { replace: true })
   }
 
   const toggleLang = () => {
@@ -232,6 +244,28 @@ export function Login() {
             <Link to={ROUTES.AUTH.REGISTER} className="text-primary hover:underline font-bold">
               {t("auth.login.createAccount")}
             </Link>
+          </div>
+
+          {/* Quick Demo Candidate Access */}
+          <div className="pt-5 border-t border-white/10 mt-6 space-y-2">
+            <span className="text-[11px] text-muted-foreground block text-center">
+              {language === "ar" ? "دخول سريع وتجربة فورية للمنظومة:" : language === "hi" ? "त्वरित डेमो अनुभव:" : "Instant Quick Access Demo:"}
+            </span>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleQuickDemoLogin("candidate")}
+              className="w-full rounded-xl border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-bold text-xs h-11 gap-2"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+              <span>
+                {language === "ar"
+                  ? "⚡ تجربة حاسبة القيمة السوقية (مرشح تجريبي)"
+                  : language === "hi"
+                  ? "⚡ बाजार मूल्य कैलकुलेटर का परीक्षण करें (डेमो कैंडिडेट)"
+                  : "⚡ Test Market Value Calculator (Demo Candidate)"}
+              </span>
+            </Button>
           </div>
         </div>
 

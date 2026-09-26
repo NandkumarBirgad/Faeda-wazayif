@@ -18,6 +18,7 @@ import { ROUTES } from "./config/routes"
 import { PublicLayout } from "./layouts/MainLayout"
 import { CandidateLayout } from "./features/candidate/layouts/CandidateLayout"
 import { CandidateDashboardPage } from "./features/candidate/pages/CandidateDashboardPage"
+import { CandidateMarketValuePage } from "./features/candidate/pages/CandidateMarketValuePage"
 import { CandidateProfilePage } from "./features/candidate/pages/CandidateProfilePage"
 import { CandidateJobsPage } from "./features/candidate/pages/CandidateJobsPage"
 import { CandidateJobDetailPage } from "./features/candidate/pages/CandidateJobDetailPage"
@@ -54,6 +55,7 @@ import { AdminSettingsPage } from "./features/admin/pages/AdminSettingsPage"
 // Guards
 import { AuthGuard } from "./shared/components/guards/AuthGuard"
 import { RoleGuard } from "./shared/components/guards/RoleGuard"
+import { AiChatbotWidget } from "./features/ai-chat/components/AiChatbotWidget"
 
 // Public pages
 import { Home } from "./features/public/pages/Home"
@@ -65,6 +67,9 @@ import { TeamsPage } from "./features/public/pages/TeamsPage"
 import { TeamDetailPage } from "./features/public/pages/TeamDetailPage"
 import { AboutPage } from "./features/public/pages/AboutPage"
 import { ContactPage } from "./features/public/pages/ContactPage"
+import { CandidatePortfolioPage } from "./features/public/pages/CandidatePortfolioPage"
+import { PostsPage } from "./features/public/pages/PostsPage"
+import { PostDetailPage } from "./features/public/pages/PostDetailPage"
 
 // Auth pages
 import { Login } from "./features/auth/pages/Login"
@@ -104,24 +109,9 @@ function App() {
           <Route path="teams/:id" element={<TeamDetailPage />} />
           <Route path="about" element={<AboutPage />} />
           <Route path="contact" element={<ContactPage />} />
-          <Route
-            path="portfolio/:username"
-            element={
-              <div className="container mx-auto px-4 py-20 text-center">
-                <p className="text-2xl font-bold font-heading text-white mb-3">المعرض المهني</p>
-                <p className="text-muted-foreground">قريباً</p>
-              </div>
-            }
-          />
-          <Route
-            path="posts"
-            element={
-              <div className="container mx-auto px-4 py-20 text-center">
-                <p className="text-2xl font-bold font-heading text-white mb-3">المقالات والرؤى</p>
-                <p className="text-muted-foreground">قريباً</p>
-              </div>
-            }
-          />
+          <Route path="portfolio/:username" element={<CandidatePortfolioPage />} />
+          <Route path="posts" element={<PostsPage />} />
+          <Route path="posts/:id" element={<PostDetailPage />} />
         </Route>
 
         {/* ── Auth Routes (standalone — no Navbar/Footer) ───── */}
@@ -140,6 +130,7 @@ function App() {
             <Route path="/candidate" element={<CandidateLayout />}>
               <Route index element={<CandidateDashboardPage />} />
               <Route path="dashboard" element={<CandidateDashboardPage />} />
+              <Route path="market-value" element={<CandidateMarketValuePage />} />
               <Route path="profile" element={<CandidateProfilePage />} />
               <Route path="cv" element={<CandidateProfilePage />} />
               <Route path="opportunities" element={<CandidateJobsPage />} />
@@ -230,6 +221,7 @@ function App() {
         />
 
       </Routes>
+      <AiChatbotWidget />
     </Router>
   )
 }

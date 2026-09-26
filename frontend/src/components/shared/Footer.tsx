@@ -18,6 +18,7 @@ export function Footer() {
     { label: t("common.nav.jobs"), href: ROUTES.JOBS.LIST },
     { label: t("common.nav.companies"), href: ROUTES.COMPANIES.LIST },
     { label: t("common.nav.teams"), href: ROUTES.TEAMS.LIST },
+    { label: language === "ar" ? "المقالات والرؤى" : language === "hi" ? "लेख और अंतर्दृष्टि" : "Articles & Insights", href: ROUTES.POSTS.LIST },
     { label: t("common.nav.about"), href: ROUTES.PUBLIC.ABOUT },
   ]
 

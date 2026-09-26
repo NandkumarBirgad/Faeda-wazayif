@@ -41,6 +41,16 @@ export const API_CONFIG = {
       SUGGESTIONS: "/api/v1/teams/suggestions",
       CREATE: "/create_team",
     },
+    PORTFOLIO: {
+      DETAIL: (username: string) => `/api/v1/portfolio/${username}`,
+    },
+    POSTS: {
+      LIST: "/api/v1/posts",
+      DETAIL: (id: string | number) => `/api/v1/posts/${id}`,
+      CREATE: "/api/v1/posts",
+      LIKE: (id: string | number) => `/api/v1/posts/${id}/like`,
+      COMMENTS: (id: string | number) => `/api/v1/posts/${id}/comments`,
+    },
     CANDIDATES: {
       DASHBOARD: "/api/v1/candidate/dashboard",
       PROFILE: "/api/v1/candidate/profile",
