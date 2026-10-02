@@ -7,21 +7,21 @@
 import { useState } from "react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
 import { motion } from "framer-motion"
-import { Lock, Mail, Eye, EyeOff, Globe, ArrowLeft, ArrowRight, AlertCircle, Loader2, Sparkles } from "lucide-react"
+import { Lock, Mail, Eye, EyeOff, ArrowLeft, ArrowRight, AlertCircle, Loader2, Sparkles, GraduationCap, UserCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { GlassCard } from "@/components/ui/glass-card"
+import { LanguageSelector } from "@/components/shared/LanguageSelector"
 import { useAuthStore } from "@/store/auth.store"
 import { authService } from "../services/auth.service"
 import { ROUTES } from "@/config/routes"
 import { useTranslation } from "@/i18n"
-import type { Language } from "@/store/language.store"
 import faedaWhiteLogo from "@/assets/logos/faeda_white_logo.png"
 
 export function Login() {
   const navigate = useNavigate()
   const location = useLocation()
   const loginStore = useAuthStore((state) => state.login)
-  const { t, language, setLanguage, isRTL } = useTranslation()
+  const { t, language, isRTL } = useTranslation()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -88,7 +88,31 @@ export function Login() {
     }
   }
 
-  const handleQuickDemoLogin = (role: "candidate" | "company") => {
+  const handleQuickDemoLogin = (role: "candidate" | "company" | "university" | "professor") => {
+    if (role === "university") {
+      const demoUser = {
+        id: "univ-demo-kfu",
+        email: "careers@kfu.edu.sa",
+        name: "جامعة الملك فيصل - الأحساء",
+        role: "university" as const,
+      }
+      loginStore(demoUser, "demo-university-token")
+      navigate(ROUTES.UNIVERSITY.DASHBOARD, { replace: true })
+      return
+    }
+
+    if (role === "professor") {
+      const demoUser = {
+        id: "prof-demo-1",
+        email: "k.sulaiman@kfu.edu.sa",
+        name: "د. خالد السليمان (مشرف التدريب التعاوني)",
+        role: "university" as const,
+      }
+      loginStore(demoUser, "demo-professor-token")
+      navigate(ROUTES.UNIVERSITY.COOP, { replace: true })
+      return
+    }
+
     const demoUser = {
       id: "candidate-demo-1",
       email: "ahmed.alfarsi@faeda.sa",
@@ -100,11 +124,6 @@ export function Login() {
     navigate(rawFrom || (role === "candidate" ? ROUTES.CANDIDATE.MARKET_VALUE : ROUTES.COMPANY.DASHBOARD), { replace: true })
   }
 
-  const toggleLang = () => {
-    const nextLang: Language = language === "ar" ? "en" : language === "en" ? "hi" : "ar"
-    setLanguage(nextLang)
-  }
-
   return (
     <div className="min-h-screen w-full bg-background flex flex-col lg:flex-row text-start">
       
@@ -113,16 +132,7 @@ export function Login() {
         
         {/* Top Header */}
         <div className="flex justify-between items-center w-full mb-6">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={toggleLang}
-            className="rounded-full bg-white/5 border-white/10 text-white hover:bg-white/10 px-4 text-xs gap-1.5"
-          >
-            <Globe className="w-3.5 h-3.5 text-primary" />
-            <span>{language === "ar" ? "English" : language === "en" ? "हिन्दी" : "العربية"}</span>
-          </Button>
+          <LanguageSelector variant="pill" dropdownAlign="start" />
 
           <Link to="/" className="text-xs font-semibold text-muted-foreground hover:text-white transition-colors flex items-center gap-1.5">
             <span>{t("auth.login.backToHome")}</span>
@@ -257,18 +267,54 @@ export function Login() {
             </Link>
           </div>
 
-          {/* Quick Demo Candidate Access */}
+          {/* Quick Demo Access Options */}
           <div className="pt-5 border-t border-white/10 mt-6 space-y-2">
             <span className="text-[11px] text-muted-foreground block text-center">
               {language === "ar" ? "دخول سريع وتجربة فورية للمنظومة:" : language === "hi" ? "त्वरित डेमो अनुभव:" : "Instant Quick Access Demo:"}
             </span>
+
+            {/* University Portal (KFU Al-Ahsa) */}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleQuickDemoLogin("university")}
+              className="w-full rounded-xl border-primary/40 bg-primary/10 hover:bg-primary/20 text-white font-bold text-xs h-10 gap-2"
+            >
+              <GraduationCap className="w-4 h-4 text-secondary" />
+              <span>
+                {language === "ar"
+                  ? "🎓 جامعة الملك فيصل - مؤشرات التوظيف وحملات الرسائل"
+                  : language === "hi"
+                  ? "🎓 किंग फैसल विश्वविद्यालय - रोजगार डैशबोर्ड और थीसिस"
+                  : "🎓 King Faisal University - Employment KPIs & Theses"}
+              </span>
+            </Button>
+
+            {/* Academic Professor Coop Supervision Portal */}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleQuickDemoLogin("professor")}
+              className="w-full rounded-xl border-border bg-card/80 hover:bg-card text-white font-bold text-xs h-10 gap-2"
+            >
+              <UserCheck className="w-4 h-4 text-primary" />
+              <span>
+                {language === "ar"
+                  ? "👨‍🏫 دخول المشرف الأكاديمي للتدريب التعاوني (د. خالد السليمان)"
+                  : language === "hi"
+                  ? "👨‍🏫 सहकारी प्रशिक्षण पर्यवेक्षक (डॉ. खालिद अल-सुलेमान)"
+                  : "👨‍🏫 Academic Coop Supervisor Portal (Dr. Khalid Sulaiman)"}
+              </span>
+            </Button>
+
+            {/* Candidate Market Value */}
             <Button
               type="button"
               variant="outline"
               onClick={() => handleQuickDemoLogin("candidate")}
-              className="w-full rounded-xl border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-bold text-xs h-11 gap-2"
+              className="w-full rounded-xl border-border bg-card/40 hover:bg-card/70 text-slate-300 hover:text-white font-bold text-xs h-10 gap-2"
             >
-              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+              <Sparkles className="w-3.5 h-3.5 text-secondary" />
               <span>
                 {language === "ar"
                   ? "⚡ تجربة حاسبة القيمة السوقية (مرشح تجريبي)"

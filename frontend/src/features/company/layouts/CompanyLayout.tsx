@@ -22,11 +22,12 @@ import {
   Menu,
   X,
   ShieldCheck,
-  Globe,
   ChevronRight,
   ChevronLeft,
   Plus,
+  Target,
 } from "lucide-react"
+import { LanguageSelector } from "@/components/shared/LanguageSelector"
 import faedaWhiteLogo from "@/assets/logos/faeda_white_logo.png"
 import { useUnreadCount } from "@/features/chat/hooks/useChat"
 import { UnreadBadge } from "@/features/chat/components/UnreadBadge"
@@ -34,7 +35,7 @@ import { UnreadBadge } from "@/features/chat/components/UnreadBadge"
 export function CompanyLayout() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const { user, logout } = useAuthStore()
-  const { isRTL, language, toggleLanguage } = useTranslation()
+  const { isRTL, language } = useTranslation()
   const { data: unreadCount = 0 } = useUnreadCount()
   const navigate = useNavigate()
 
@@ -73,6 +74,14 @@ export function CompanyLayout() {
       icon: Users,
       label_ar: "المتقدمين والفرز",
       label_en: "Applications Pipeline",
+      isPrimary: true,
+      end: false,
+    },
+    {
+      to: ROUTES.COMPANY.CAMPAIGNS,
+      icon: Target,
+      label_ar: "الحملات الوظيفية",
+      label_en: "Talent Campaigns",
       isPrimary: true,
       end: false,
     },
@@ -153,16 +162,8 @@ export function CompanyLayout() {
             {isRTL ? <ChevronLeft className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
           </Link>
 
-          {/* Language Toggle */}
-          <button
-            type="button"
-            onClick={toggleLanguage}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-300 hover:text-white px-2.5 py-1.5 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 transition-all"
-            title="Change language"
-          >
-            <Globe className="w-3.5 h-3.5 text-emerald-400" />
-            <span>{language === "ar" ? "EN" : "العربية"}</span>
-          </button>
+          {/* Language Selector */}
+          <LanguageSelector variant="compact" dropdownAlign="end" />
 
           {/* User Profile Capsule */}
           <div className="flex items-center gap-2.5 pl-2 rtl:pl-0 rtl:pr-2 border-l rtl:border-l-0 rtl:border-r border-slate-800">

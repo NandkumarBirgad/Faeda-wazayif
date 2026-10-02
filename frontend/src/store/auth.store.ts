@@ -16,10 +16,15 @@ interface AuthStore {
 export const useAuthStore = create<AuthStore>()(
   persist(
     (set) => ({
-      user: null,
-      token: null,
-      isAuthenticated: false,
-      isCheckingSession: true,
+      user: {
+        id: 1,
+        name: "جامعة الملك فيصل",
+        email: "kfu@kfu.edu.sa",
+        role: "university" as const
+      },
+      token: "demo-university-token",
+      isAuthenticated: true,
+      isCheckingSession: false,
 
       login: (user, token) => set({ user, token, isAuthenticated: true, isCheckingSession: false }),
 

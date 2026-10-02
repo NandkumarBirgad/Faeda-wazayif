@@ -15,6 +15,7 @@ import { NextBestActions } from "../components/dashboard/NextBestActions"
 import { RecommendedOpportunities } from "../components/dashboard/RecommendedOpportunities"
 import { RecentActivityCard } from "../components/dashboard/RecentActivityCard"
 import { QuickActionsGrid } from "../components/dashboard/QuickActionsGrid"
+import { CandidateCampaignInvitesCard } from "../components/dashboard/CandidateCampaignInvitesCard"
 import { AlertCircle, RefreshCw } from "lucide-react"
 
 export function CandidateDashboardPage() {
@@ -60,6 +61,9 @@ export function CandidateDashboardPage() {
         candidate={dashboard.candidate}
         percentage={dashboard.profile_health.percentage}
       />
+
+      {/* ── 1.5 Exclusive Recruitment Campaign Invitations ── */}
+      <CandidateCampaignInvitesCard />
 
       {/* ── 2. Top Intelligence Row: Market Value & Profile Health ── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">

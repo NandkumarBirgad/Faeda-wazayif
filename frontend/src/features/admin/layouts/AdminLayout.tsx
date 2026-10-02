@@ -22,18 +22,18 @@ import {
   Menu,
   X,
   ShieldCheck,
-  Globe,
   ExternalLink,
   ChevronRight,
   ChevronLeft,
   Sparkles,
 } from "lucide-react"
+import { LanguageSelector } from "@/components/shared/LanguageSelector"
 import faedaWhiteLogo from "@/assets/logos/faeda_white_logo.png"
 
 export function AdminLayout() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const { user, logout } = useAuthStore()
-  const { isRTL, language, toggleLanguage } = useTranslation()
+  const { isRTL, language } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -142,15 +142,8 @@ export function AdminLayout() {
               <span>{language === "ar" ? "معاينة المنصة" : "View Live Site"}</span>
             </Link>
 
-            {/* Language Switcher */}
-            <button
-              onClick={toggleLanguage}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-300 hover:text-white px-3 py-2 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] transition-all"
-              title="Change Language"
-            >
-              <Globe className="w-3.5 h-3.5 text-primary" />
-              <span>{language === "ar" ? "English" : "العربية"}</span>
-            </button>
+            {/* Language Selector */}
+            <LanguageSelector variant="compact" dropdownAlign="end" />
 
             {/* Admin User Capsule */}
             <div className="flex items-center gap-3 pl-3 rtl:pl-0 rtl:pr-3 border-l rtl:border-l-0 rtl:border-r border-white/10">

@@ -34,6 +34,8 @@ import { CompanyJobsPage } from "./features/company/pages/CompanyJobsPage"
 import { CompanyApplicationsPage } from "./features/company/pages/CompanyApplicationsPage"
 import { CompanyTalentPage } from "./features/company/pages/CompanyTalentPage"
 import { CompanyTeamsPage } from "./features/company/pages/CompanyTeamsPage"
+import { CompanyCampaignsPage } from "./features/company/pages/CompanyCampaignsPage"
+import { CompanyCampaignDetailPage } from "./features/company/pages/CompanyCampaignDetailPage"
 import { UniversityLayout } from "./features/university/layouts/UniversityLayout"
 import { UniversityDashboardPage } from "./features/university/pages/UniversityDashboardPage"
 import { UniversityProfilePage } from "./features/university/pages/UniversityProfilePage"
@@ -42,6 +44,10 @@ import { UniversityStudentDetailPage } from "./features/university/pages/Univers
 import { UniversityVerificationsPage } from "./features/university/pages/UniversityVerificationsPage"
 import { UniversityDepartmentsPage } from "./features/university/pages/UniversityDepartmentsPage"
 import { UniversityOpportunitiesPage } from "./features/university/pages/UniversityOpportunitiesPage"
+import { UniversityCampaignsPage } from "./features/university/pages/UniversityCampaignsPage"
+import { UniversityIncubatorPage } from "./features/university/pages/UniversityIncubatorPage"
+import { UniversityCoopSupervisionPage } from "./features/university/pages/UniversityCoopSupervisionPage"
+import { UniversityAcademicUpdatesPage } from "./features/university/pages/UniversityAcademicUpdatesPage"
 import { ChatPage } from "./features/chat/pages/ChatPage"
 import { AdminLayout } from "./features/admin/layouts/AdminLayout"
 import { AdminDashboardPage } from "./features/admin/pages/AdminDashboardPage"
@@ -156,6 +162,8 @@ function App() {
               <Route path="profile" element={<CompanyProfilePage />} />
               <Route path="jobs" element={<CompanyJobsPage />} />
               <Route path="applications" element={<CompanyApplicationsPage />} />
+              <Route path="campaigns" element={<CompanyCampaignsPage />} />
+              <Route path="campaigns/:id" element={<CompanyCampaignDetailPage />} />
               <Route path="talent" element={<CompanyTalentPage />} />
               <Route path="teams" element={<CompanyTeamsPage />} />
               <Route path="chat" element={<ChatPage />} />
@@ -176,7 +184,13 @@ function App() {
               <Route path="students/:id" element={<UniversityStudentDetailPage />} />
               <Route path="verifications" element={<UniversityVerificationsPage />} />
               <Route path="departments" element={<UniversityDepartmentsPage />} />
+              <Route path="academic-updates" element={<UniversityAcademicUpdatesPage />} />
+              <Route path="updates" element={<UniversityAcademicUpdatesPage />} />
               <Route path="opportunities" element={<UniversityOpportunitiesPage />} />
+              <Route path="campaigns" element={<UniversityCampaignsPage />} />
+              <Route path="incubator" element={<UniversityIncubatorPage />} />
+              <Route path="coop-supervision" element={<UniversityCoopSupervisionPage />} />
+              <Route path="coop" element={<UniversityCoopSupervisionPage />} />
               <Route path="settings" element={<UniversityProfilePage />} />
               <Route path="*" element={<Navigate to="/university" replace />} />
             </Route>
