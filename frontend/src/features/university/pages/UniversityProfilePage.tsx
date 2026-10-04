@@ -4,6 +4,7 @@ import { tl } from "../utils/universityLocalization"
 import { useUniversityProfile } from "../hooks/useUniversityProfile"
 import { useUniversityActions } from "../hooks/useUniversityActions"
 import { UniversityProfileHealthCard } from "../components/UniversityProfileHealthCard"
+import { UserPublishedCampaignsSection } from "@/features/public/components/UserPublishedCampaignsSection"
 import {
   GraduationCap,
   Save,
@@ -439,6 +440,9 @@ export function UniversityProfilePage() {
               </button>
             </div>
           </form>
+
+          {/* Published University Research & Academic Campaigns */}
+          <UserPublishedCampaignsSection userType="university" userId={data?.profile?.id} />
         </>
       )}
     </div>

@@ -9,13 +9,14 @@
 import { useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { Menu, X, Bell, User } from "lucide-react"
+import { Menu, X, User } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
 import { ROUTES } from "@/config/routes"
 import { useTranslation } from "@/i18n"
 import { useAuthStore } from "@/store/auth.store"
 import { LanguageSelector } from "@/components/shared/LanguageSelector"
+import { NotificationsPopover } from "@/components/shared/NotificationsPopover"
 import faedaWhiteLogo from "@/assets/logos/faeda_white_logo.png"
 
 export function Navbar() {
@@ -82,9 +83,8 @@ export function Navbar() {
           {/* Trilingual Language Selector */}
           <LanguageSelector variant="default" dropdownAlign="end" />
 
-          <Button variant="ghost" size="icon" className="rounded-xl text-muted-foreground hover:text-white">
-            <Bell className="h-4 w-4" />
-          </Button>
+          {/* Social Notifications Popover */}
+          <NotificationsPopover />
 
           {isAuthenticated && user ? (
             <div className="flex items-center gap-2">

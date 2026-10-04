@@ -1,6 +1,15 @@
 import { API_CONFIG } from "@/config/api"
 import type { LoginCredentials, RegisterDTO, AuthResponse, ForgotPasswordDTO, ResetPasswordDTO, AuthUser } from "../types/auth.types"
 
+function normalizeAuthRole(role: any): "candidate" | "company" | "university" | "admin" {
+  if (!role) return "candidate"
+  const r = String(role).toLowerCase()
+  if (r.includes("admin")) return "admin"
+  if (r.includes("company") || r.includes("employer")) return "company"
+  if (r.includes("univ") || r.includes("prof")) return "university"
+  return "candidate"
+}
+
 class AuthService {
 
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
@@ -31,19 +40,24 @@ class AuthService {
 
       // Verify and restore full canonical session
       const restoredUser = await this.checkSession(receivedToken)
-      const finalUser: AuthUser = restoredUser || (responseData?.user
+      const rawRole = responseData?.role || responseData?.user?.role || "candidate"
+      const finalRole = normalizeAuthRole(restoredUser?.role || rawRole)
+
+      const finalUser: AuthUser = restoredUser
+        ? { ...restoredUser, role: finalRole }
+        : responseData?.user
         ? {
             id: String(responseData.user.id || responseData.user.user_id),
             email: responseData.user.email,
-            role: responseData.role || responseData.user.role || "candidate",
+            role: finalRole,
             name: responseData.user.name || responseData.user.fullname || "",
           }
         : {
             id: credentials.email,
             email: credentials.email,
-            role: "candidate",
+            role: normalizeAuthRole(credentials.email.toLowerCase().includes("admin") ? "admin" : "candidate"),
             name: credentials.email.split("@")[0],
-          })
+          }
 
       return {
         user: finalUser,
@@ -269,7 +283,7 @@ class AuthService {
           return {
             id: String(meData.user.id || meData.user.user_id),
             email: meData.user.email || "",
-            role: meData.role,
+            role: normalizeAuthRole(meData.role || meData.user.role),
             name: meData.user.name || meData.user.fullname || "",
           }
         }

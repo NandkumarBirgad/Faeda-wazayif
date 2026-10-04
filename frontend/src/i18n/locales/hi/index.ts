@@ -6,12 +6,12 @@
  */
 import { publicHi } from "@/i18n/namespaces/public"
 import { universityHi } from "@/i18n/namespaces/university"
-import { candidateEn } from "@/i18n/namespaces/candidate"
+import { candidateHi } from "@/i18n/namespaces/candidate"
 import { chatEn } from "@/i18n/namespaces/chat"
 
 export const hiLocale = {
   chat: chatEn,
-  candidate: candidateEn,
+  candidate: candidateHi,
   university: universityHi,
   common: {
     actions: {

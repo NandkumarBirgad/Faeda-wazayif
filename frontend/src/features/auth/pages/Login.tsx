@@ -7,7 +7,7 @@
 import { useState } from "react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
 import { motion } from "framer-motion"
-import { Lock, Mail, Eye, EyeOff, ArrowLeft, ArrowRight, AlertCircle, Loader2, Sparkles, GraduationCap, UserCheck } from "lucide-react"
+import { Lock, Mail, Eye, EyeOff, ArrowLeft, ArrowRight, AlertCircle, Loader2, Sparkles, GraduationCap, UserCheck, Building2, Database, TrendingUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { GlassCard } from "@/components/ui/glass-card"
 import { LanguageSelector } from "@/components/shared/LanguageSelector"
@@ -88,7 +88,7 @@ export function Login() {
     }
   }
 
-  const handleQuickDemoLogin = (role: "candidate" | "company" | "university" | "professor") => {
+  const handleQuickDemoLogin = (role: "candidate" | "company" | "university" | "professor" | "admin") => {
     if (role === "university") {
       const demoUser = {
         id: "univ-demo-kfu",
@@ -113,15 +113,38 @@ export function Login() {
       return
     }
 
+    if (role === "company") {
+      const demoUser = {
+        id: "company-demo-1",
+        email: "hr@aramco-digital.sa",
+        name: "Aramco Digital Solutions",
+        role: "company" as const,
+      }
+      loginStore(demoUser, "demo-company-token")
+      navigate(ROUTES.COMPANY.DASHBOARD, { replace: true })
+      return
+    }
+
+    if (role === "admin") {
+      const demoUser = {
+        id: "admin-demo-1",
+        email: "admin@faeda.jobs",
+        name: "مدير النظام (Admin)",
+        role: "admin" as const,
+      }
+      loginStore(demoUser, "demo-admin-token")
+      navigate(ROUTES.ADMIN.DASHBOARD, { replace: true })
+      return
+    }
+
     const demoUser = {
       id: "candidate-demo-1",
       email: "ahmed.alfarsi@faeda.sa",
       name: "Ahmed Al-Farsi",
-      role: role,
+      role: "candidate" as const,
     }
     loginStore(demoUser, "demo-candidate-token")
-    const rawFrom = (location.state as { from?: string })?.from
-    navigate(rawFrom || (role === "candidate" ? ROUTES.CANDIDATE.MARKET_VALUE : ROUTES.COMPANY.DASHBOARD), { replace: true })
+    navigate(ROUTES.CANDIDATE.DASHBOARD, { replace: true })
   }
 
   return (
@@ -307,20 +330,65 @@ export function Login() {
               </span>
             </Button>
 
-            {/* Candidate Market Value */}
+            {/* 1. Job Seeker (Candidate) */}
             <Button
               type="button"
               variant="outline"
               onClick={() => handleQuickDemoLogin("candidate")}
-              className="w-full rounded-xl border-border bg-card/40 hover:bg-card/70 text-slate-300 hover:text-white font-bold text-xs h-10 gap-2"
+              className="w-full rounded-xl border-cyan-500/30 bg-cyan-950/20 hover:bg-cyan-900/40 text-cyan-300 hover:text-white font-bold text-xs h-10 gap-2"
             >
-              <Sparkles className="w-3.5 h-3.5 text-secondary" />
+              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
               <span>
                 {language === "ar"
-                  ? "⚡ تجربة حاسبة القيمة السوقية (مرشح تجريبي)"
+                  ? "👤 باحث عن عمل: رؤى السوق والرواتب (Job Seeker)"
+                  : "👤 Job Seeker: Talent & Market Insights Dashboard"}
+              </span>
+            </Button>
+
+            {/* 2. Company (Employer) */}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleQuickDemoLogin("company")}
+              className="w-full rounded-xl border-emerald-500/30 bg-emerald-950/20 hover:bg-emerald-900/40 text-emerald-300 hover:text-white font-bold text-xs h-10 gap-2"
+            >
+              <Building2 className="w-3.5 h-3.5 text-emerald-400" />
+              <span>
+                {language === "ar"
+                  ? "🏢 المنشأة: تحليلات سوق التوظيف وتكلفة الاستقطاب (Company)"
+                  : "🏢 Company: Hiring Market Insights & Talent Costs"}
+              </span>
+            </Button>
+
+            {/* 3. Market Trends */}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate("/market-trends")}
+              className="w-full rounded-xl border-indigo-500/30 bg-indigo-950/20 hover:bg-indigo-900/40 text-indigo-300 hover:text-white font-bold text-xs h-10 gap-2"
+            >
+              <TrendingUp className="w-3.5 h-3.5 text-indigo-400" />
+              <span>
+                {language === "ar"
+                  ? "📈 مؤشرات واتجاهات السوق الإقليمية (Market Trends)"
+                  : "📈 Regional Market Trends & Multi-Filter Analytics"}
+              </span>
+            </Button>
+
+            {/* 4. Admin Portal */}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleQuickDemoLogin("admin")}
+              className="w-full rounded-xl border-amber-500/30 bg-amber-950/20 hover:bg-amber-900/40 text-amber-300 hover:text-white font-bold text-xs h-10 gap-2"
+            >
+              <Database className="w-3.5 h-3.5 text-amber-400" />
+              <span>
+                {language === "ar"
+                  ? "⚙️ لوحة إدارة المنصة والنظام (Admin Console)"
                   : language === "hi"
-                  ? "⚡ बाजार मूल्य कैलकुलेटर का परीक्षण करें (डेमो कैंडिडेट)"
-                  : "⚡ Test Market Value Calculator (Demo Candidate)"}
+                  ? "⚙️ व्यवस्थापक कंसोल (Admin Console)"
+                  : "⚙️ Admin Console: Platform & User Governance"}
               </span>
             </Button>
           </div>

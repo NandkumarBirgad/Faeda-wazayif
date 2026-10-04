@@ -50,6 +50,18 @@ export const API_CONFIG = {
       CREATE: "/api/v1/posts",
       LIKE: (id: string | number) => `/api/v1/posts/${id}/like`,
       COMMENTS: (id: string | number) => `/api/v1/posts/${id}/comments`,
+      COMMENT_EDIT: (id: string | number) => `/api/v1/posts/comments/${id}`,
+      COMMENT_DELETE: (id: string | number) => `/api/v1/posts/comments/${id}`,
+      SHARE: (id: string | number) => `/api/v1/posts/${id}/share`,
+      SAVE: (id: string | number) => `/api/v1/posts/${id}/save`,
+      SAVED: "/api/v1/posts/saved",
+      ANALYTICS: (id: string | number) => `/api/v1/campaigns/${id}/analytics`,
+      BY_USER: "/api/v1/posts/by-user",
+    },
+    NOTIFICATIONS: {
+      LIST: "/api/v1/notifications",
+      READ: (id: string | number) => `/api/v1/notifications/${id}/read`,
+      READ_ALL: "/api/v1/notifications/read-all",
     },
     CANDIDATES: {
       DASHBOARD: "/api/v1/candidate/dashboard",
@@ -92,6 +104,8 @@ export const API_CONFIG = {
       EDIT_EDU: "/edit-profile/educational_data",
       APPLICATIONS: "/my-jobapplications",
       RECOMMENDATIONS: "/recommendations",
+      SETTINGS: "/api/v1/candidate/settings",
+      CHANGE_PASSWORD: "/api/v1/candidate/change-password",
     },
     COMPANY: {
       ME: "/api/v1/company/me",

@@ -27,6 +27,8 @@ import { CandidateApplicationDetailPage } from "./features/candidate/pages/Candi
 import { CandidateSavedJobsPage } from "./features/candidate/pages/CandidateSavedJobsPage"
 import { CandidateTeamsPage } from "./features/candidate/pages/CandidateTeamsPage"
 import { CandidateTeamDetailPage } from "./features/candidate/pages/CandidateTeamDetailPage"
+import { CandidateSettingsPage } from "./features/candidate/pages/CandidateSettingsPage"
+import { CandidateCampaignsPage } from "./features/candidate/pages/CandidateCampaignsPage"
 import { CompanyLayout } from "./features/company/layouts/CompanyLayout"
 import { CompanyDashboardPage } from "./features/company/pages/CompanyDashboardPage"
 import { CompanyProfilePage } from "./features/company/pages/CompanyProfilePage"
@@ -36,6 +38,8 @@ import { CompanyTalentPage } from "./features/company/pages/CompanyTalentPage"
 import { CompanyTeamsPage } from "./features/company/pages/CompanyTeamsPage"
 import { CompanyCampaignsPage } from "./features/company/pages/CompanyCampaignsPage"
 import { CompanyCampaignDetailPage } from "./features/company/pages/CompanyCampaignDetailPage"
+import { CompanySettingsPage } from "./features/company/pages/CompanySettingsPage"
+import { CompanyBillingPage } from "./features/company/pages/CompanyBillingPage"
 import { UniversityLayout } from "./features/university/layouts/UniversityLayout"
 import { UniversityDashboardPage } from "./features/university/pages/UniversityDashboardPage"
 import { UniversityProfilePage } from "./features/university/pages/UniversityProfilePage"
@@ -48,6 +52,7 @@ import { UniversityCampaignsPage } from "./features/university/pages/UniversityC
 import { UniversityIncubatorPage } from "./features/university/pages/UniversityIncubatorPage"
 import { UniversityCoopSupervisionPage } from "./features/university/pages/UniversityCoopSupervisionPage"
 import { UniversityAcademicUpdatesPage } from "./features/university/pages/UniversityAcademicUpdatesPage"
+import { UniversitySettingsPage } from "./features/university/pages/UniversitySettingsPage"
 import { ChatPage } from "./features/chat/pages/ChatPage"
 import { AdminLayout } from "./features/admin/layouts/AdminLayout"
 import { AdminDashboardPage } from "./features/admin/pages/AdminDashboardPage"
@@ -57,6 +62,8 @@ import { AdminAuditLogsPage } from "./features/admin/pages/AdminAuditLogsPage"
 import { AdminReportsPage } from "./features/admin/pages/AdminReportsPage"
 import { AdminCategoriesPage } from "./features/admin/pages/AdminCategoriesPage"
 import { AdminSettingsPage } from "./features/admin/pages/AdminSettingsPage"
+import { MarketTrendsPage } from "./features/market-insights/pages/MarketTrendsPage"
+import { AdminMarketDataPage } from "./features/market-insights/pages/AdminMarketDataPage"
 
 // Guards
 import { AuthGuard } from "./shared/components/guards/AuthGuard"
@@ -118,6 +125,7 @@ function App() {
           <Route path="portfolio/:username" element={<CandidatePortfolioPage />} />
           <Route path="posts" element={<PostsPage />} />
           <Route path="posts/:id" element={<PostDetailPage />} />
+          <Route path="market-trends" element={<MarketTrendsPage />} />
         </Route>
 
         {/* ── Auth Routes (standalone — no Navbar/Footer) ───── */}
@@ -148,6 +156,10 @@ function App() {
               <Route path="teams" element={<CandidateTeamsPage />} />
               <Route path="teams/:id" element={<CandidateTeamDetailPage />} />
               <Route path="chat" element={<ChatPage />} />
+              <Route path="settings" element={<CandidateSettingsPage />} />
+              <Route path="campaigns" element={<CandidateCampaignsPage />} />
+              <Route path="coop-training" element={<UniversityCoopSupervisionPage initialPersona="student" />} />
+              <Route path="coop" element={<UniversityCoopSupervisionPage initialPersona="student" />} />
               <Route path="*" element={<Navigate to="/candidate" replace />} />
             </Route>
           </Route>
@@ -167,7 +179,8 @@ function App() {
               <Route path="talent" element={<CompanyTalentPage />} />
               <Route path="teams" element={<CompanyTeamsPage />} />
               <Route path="chat" element={<ChatPage />} />
-              <Route path="settings" element={<CompanyProfilePage />} />
+              <Route path="settings" element={<CompanySettingsPage />} />
+              <Route path="billing" element={<CompanyBillingPage />} />
               <Route path="*" element={<Navigate to="/company" replace />} />
             </Route>
           </Route>
@@ -191,7 +204,7 @@ function App() {
               <Route path="incubator" element={<UniversityIncubatorPage />} />
               <Route path="coop-supervision" element={<UniversityCoopSupervisionPage />} />
               <Route path="coop" element={<UniversityCoopSupervisionPage />} />
-              <Route path="settings" element={<UniversityProfilePage />} />
+              <Route path="settings" element={<UniversitySettingsPage />} />
               <Route path="*" element={<Navigate to="/university" replace />} />
             </Route>
           </Route>
@@ -209,6 +222,7 @@ function App() {
               <Route path="reports" element={<AdminReportsPage />} />
               <Route path="categories" element={<AdminCategoriesPage />} />
               <Route path="settings" element={<AdminSettingsPage />} />
+              <Route path="market-data" element={<AdminMarketDataPage />} />
               <Route path="*" element={<Navigate to="/admin" replace />} />
             </Route>
           </Route>

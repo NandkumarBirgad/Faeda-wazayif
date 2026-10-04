@@ -35,10 +35,12 @@ const DEFAULT_INCUBATOR_INFO: IncubatorInfo = {
   incubator_name: "حاضنة منشآت - جامعة الملك فيصل بالأحساء",
   university_name: "جامعة الملك فيصل",
   active_cohort: "الدفعة الخامسة 2025",
-  supported_ventures_count: 3,
-  jobs_created_total: 34,
-  funding_raised_total_sar: 4200000,
-  economic_impact_summary: "ربط مخرجات الابتكار الجامعي بحلول الاستدامة والأمن الغذائي لواحة الأحساء ورؤية السعودية 2030."
+  location: "الأحساء",
+  total_graduated_entrepreneurs: 42,
+  active_startups_count: 3,
+  total_jobs_created: 34,
+  total_funding_raised_sar: 4200000,
+  criteria_compliance_score: "96.4%",
 }
 
 const DEFAULT_VENTURES: UniversityIncubatorVenture[] = [

@@ -25,15 +25,25 @@ import {
   ArrowRight,
   ExternalLink,
   BookOpen,
+  BarChart3,
+  CornerDownLeft,
+  Edit2,
+  Trash2,
 } from "lucide-react"
 import { GlassCard } from "@/components/ui/glass-card"
 import { Button } from "@/components/ui/button"
 import { postsService } from "../services/posts.service"
+import { CampaignShareModal } from "../components/CampaignShareModal"
+import { CampaignAnalyticsModal } from "../components/CampaignAnalyticsModal"
 import type { PostArticle, PostComment } from "../types/posts.types"
 import { ROUTES } from "@/config/routes"
 import { useTranslation } from "@/i18n"
 import { useAuthStore } from "@/store/auth.store"
-import { getLocalizedPost } from "@/lib/localization.utils"
+import {
+  getLocalizedPost,
+  getLocalizedAccountType,
+  getLocalizedPostType,
+} from "@/lib/localization.utils"
 import toast from "react-hot-toast"
 
 export function PostDetailPage() {
@@ -56,6 +66,18 @@ export function PostDetailPage() {
   const [commentAuthor, setCommentAuthor] = useState("")
   const [isSubmittingComment, setIsSubmittingComment] = useState(false)
 
+  // Modals state
+  const [isShareOpen, setIsShareOpen] = useState(false)
+  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false)
+
+  // Reply & Edit state
+  const [replyingToId, setReplyingToId] = useState<number | null>(null)
+  const [replyText, setReplyText] = useState("")
+  const [isSubmittingReply, setIsSubmittingReply] = useState(false)
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null)
+  const [editText, setEditText] = useState("")
+  const [isSubmittingEdit, setIsSubmittingEdit] = useState(false)
+
   const ChevronIcon = isRTL ? ChevronRight : ChevronLeft
   const ArrowIcon = isRTL ? ArrowLeft : ArrowRight
 
@@ -70,6 +92,7 @@ export function PostDetailPage() {
           setPost(res.post)
           setIsLiked(Boolean(res.post.isLiked))
           setLikesCount(res.post.likes || 0)
+          setIsBookmarked(Boolean(res.post.isSaved))
           setComments(res.post.comments || [])
           setRelated(res.related || [])
         }
@@ -103,35 +126,29 @@ export function PostDetailPage() {
     }
   }
 
-  const handleShare = () => {
-    const url = window.location.href
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(url)
+  const handleToggleBookmark = async () => {
+    if (!post) return
+    const prevBookmarked = isBookmarked
+    setIsBookmarked(!prevBookmarked)
+
+    try {
+      const res = await postsService.toggleSave(post.id)
+      setIsBookmarked(res.isSaved)
       toast.success(
-        language === "ar"
-          ? "تم نسخ رابط المقال للمشاركة!"
-          : language === "hi"
-          ? "लेख का लिंक कॉपी किया गया!"
-          : "Article link copied to clipboard!"
+        res.isSaved
+          ? language === "ar"
+            ? "تم حفظ المقال في قائمتك المفضلة!"
+            : "Article saved to your bookmarks!"
+          : language === "ar"
+          ? "تمت إزالة المقال من المحفوظات"
+          : "Removed from bookmarks"
+      )
+    } catch {
+      setIsBookmarked(prevBookmarked)
+      toast.error(
+        language === "ar" ? "تعذر حفظ المقال" : "Failed to toggle bookmark"
       )
     }
-  }
-
-  const handleToggleBookmark = () => {
-    setIsBookmarked(!isBookmarked)
-    toast.success(
-      isBookmarked
-        ? language === "ar"
-          ? "تمت إزالة المقال من المحفوظات"
-          : language === "hi"
-          ? "बुकमार्क से हटाया गया"
-          : "Removed from bookmarks"
-        : language === "ar"
-        ? "تم حفظ المقال في قائمتك المفضلة!"
-        : language === "hi"
-        ? "लेख आपकी पसंदीदा सूची में सहेजा गया!"
-        : "Article saved to your bookmarks!"
-    )
   }
 
   const handleAddComment = async (e: React.FormEvent) => {
@@ -139,7 +156,9 @@ export function PostDetailPage() {
     if (!post || !commentText.trim()) return
 
     setIsSubmittingComment(true)
-    const authorNameToUse = commentAuthor.trim() || (user ? user.name || (language === "ar" ? "عضو مسجل" : language === "hi" ? "पंजीकृत सदस्य" : "Registered Member") : (language === "ar" ? "زائر مهتم" : language === "hi" ? "अतिथि पाठक" : "Guest Reader"))
+    const authorNameToUse =
+      commentAuthor.trim() ||
+      (user ? user.name || (language === "ar" ? "عضو مسجل" : "Registered Member") : (language === "ar" ? "زائر مهتم" : "Guest Reader"))
 
     try {
       const res = await postsService.addComment(post.id, commentText.trim(), authorNameToUse)
@@ -148,20 +167,90 @@ export function PostDetailPage() {
       toast.success(
         language === "ar"
           ? "تمت إضافة تعليقك بنجاح!"
-          : language === "hi"
-          ? "आपकी टिप्पणी सफलतापूर्वक जोड़ी गई!"
           : "Comment posted successfully!"
       )
     } catch {
       toast.error(
-        language === "ar"
-          ? "تعذر إرسال التعليق."
-          : language === "hi"
-          ? "टिप्पणी भेजने में विफल।"
-          : "Failed to post comment."
+        language === "ar" ? "تعذر إرسال التعليق." : "Failed to post comment."
       )
     } finally {
       setIsSubmittingComment(false)
+    }
+  }
+
+  const handleAddReply = async (parentId: number) => {
+    if (!post || !replyText.trim() || isSubmittingReply) return
+    setIsSubmittingReply(true)
+    const authorNameToUse = user?.name || (language === "ar" ? "عضو مسجل" : "Registered Member")
+
+    try {
+      const res = await postsService.addComment(post.id, replyText.trim(), authorNameToUse, parentId)
+      setComments((prev) =>
+        prev.map((c) =>
+          c.id === parentId
+            ? { ...c, replies: [...(c.replies || []), res.comment] }
+            : c
+        )
+      )
+      setReplyText("")
+      setReplyingToId(null)
+      toast.success(language === "ar" ? "تم إرسال ردك بنجاح!" : "Reply posted successfully!")
+    } catch {
+      toast.error(language === "ar" ? "تعذر إرسال الرد" : "Failed to post reply")
+    } finally {
+      setIsSubmittingReply(false)
+    }
+  }
+
+  const handleSaveEdit = async (commentId: number) => {
+    if (!editText.trim() || isSubmittingEdit) return
+    setIsSubmittingEdit(true)
+    try {
+      const res = await postsService.editComment(commentId, editText.trim())
+      setComments((prev) =>
+        prev.map((c) => {
+          if (c.id === commentId) return { ...c, text: res.comment.text, content: res.comment.text }
+          if (c.replies) {
+            return {
+              ...c,
+              replies: c.replies.map((r) =>
+                r.id === commentId ? { ...r, text: res.comment.text, content: res.comment.text } : r
+              ),
+            }
+          }
+          return c
+        })
+      )
+      setEditingCommentId(null)
+      setEditText("")
+      toast.success(language === "ar" ? "تم تعديل التعليق بنجاح" : "Comment edited successfully")
+    } catch {
+      toast.error(language === "ar" ? "تعذر تعديل التعليق" : "Failed to edit comment")
+    } finally {
+      setIsSubmittingEdit(false)
+    }
+  }
+
+  const handleDeleteComment = async (commentId: number) => {
+    const confirmMsg =
+      language === "ar"
+        ? "هل أنت متأكد من رغبتك في حذف هذا التعليق؟"
+        : "Are you sure you want to delete this comment?"
+    if (!window.confirm(confirmMsg)) return
+
+    try {
+      await postsService.deleteComment(commentId)
+      setComments((prev) =>
+        prev
+          .filter((c) => c.id !== commentId)
+          .map((c) => ({
+            ...c,
+            replies: c.replies ? c.replies.filter((r) => r.id !== commentId) : [],
+          }))
+      )
+      toast.success(language === "ar" ? "تم حذف التعليق" : "Comment deleted")
+    } catch {
+      toast.error(language === "ar" ? "تعذر حذف التعليق" : "Failed to delete comment")
     }
   }
 
@@ -231,8 +320,31 @@ export function PostDetailPage() {
 
         {/* ── Article Header ───────────────────────────────────────── */}
         <div className="space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary text-xs font-bold">
-            {localizedPost.category}
+          <div className="flex flex-wrap items-center gap-2">
+            {localizedPost.accountType && (
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                  localizedPost.accountType === "university"
+                    ? "bg-emerald-950/80 text-emerald-300 border-emerald-500/40"
+                    : localizedPost.accountType === "company"
+                    ? "bg-indigo-950/80 text-indigo-300 border-indigo-500/40"
+                    : "bg-amber-950/80 text-amber-300 border-amber-500/40"
+                }`}
+              >
+                {localizedPost.accountType === "university" ? "🏛️ " : localizedPost.accountType === "company" ? "🏢 " : "👤 "}
+                {getLocalizedAccountType(localizedPost.accountType, language)}
+              </span>
+            )}
+
+            {localizedPost.postType && (
+              <span className="px-3 py-1 rounded-full bg-white/10 text-white text-xs font-bold border border-white/10">
+                {getLocalizedPostType(localizedPost.postType, language)}
+              </span>
+            )}
+
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary text-xs font-bold">
+              {localizedPost.category}
+            </div>
           </div>
 
           <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold font-heading text-white tracking-tight leading-tight">
@@ -327,7 +439,7 @@ export function PostDetailPage() {
           )}
 
           {/* Interaction Bar */}
-          <div className="pt-6 border-t border-white/10 flex items-center justify-between">
+          <div className="pt-6 border-t border-white/10 flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-3">
               <Button
                 onClick={handleLike}
@@ -340,7 +452,7 @@ export function PostDetailPage() {
               >
                 <Heart className={`w-4 h-4 ${isLiked ? "fill-red-400" : ""}`} />
                 <span>{likesCount}</span>
-                <span className="hidden sm:inline">{language === "ar" ? "إعجاب" : language === "hi" ? "पसंद" : "Likes"}</span>
+                <span className="hidden sm:inline">{language === "ar" ? "إعجاب" : "Likes"}</span>
               </Button>
 
               <Button
@@ -357,26 +469,36 @@ export function PostDetailPage() {
                   {isBookmarked
                     ? language === "ar"
                       ? "محفوظ"
-                      : language === "hi"
-                      ? "सहेजा गया"
                       : "Saved"
                     : language === "ar"
-                    ? "حفظ المقال"
-                    : language === "hi"
-                    ? "लेख सहेजें"
+                    ? "حفظ"
                     : "Bookmark"}
                 </span>
               </Button>
+
+              <Button
+                onClick={() => setIsShareOpen(true)}
+                variant="outline"
+                className="rounded-xl px-4 py-2 text-xs sm:text-sm border-white/10 text-muted-foreground hover:text-white flex items-center gap-2"
+              >
+                <Share2 className="w-4 h-4" />
+                <span>{post?.sharesCount || 0}</span>
+                <span className="hidden sm:inline">{language === "ar" ? "مشاركة" : "Share"}</span>
+              </Button>
             </div>
 
-            <Button
-              onClick={handleShare}
-              variant="outline"
-              className="rounded-xl px-4 py-2 text-xs sm:text-sm border-white/10 text-muted-foreground hover:text-white flex items-center gap-2"
-            >
-              <Share2 className="w-4 h-4" />
-              <span>{language === "ar" ? "مشاركة" : language === "hi" ? "साझा करें" : "Share"}</span>
-            </Button>
+            {(user?.role === "admin" ||
+              (user && user.role === post?.accountType) ||
+              (user && post?.author?.username && user.email?.includes(post.author.username))) && (
+              <Button
+                onClick={() => setIsAnalyticsOpen(true)}
+                variant="outline"
+                className="rounded-xl px-4 py-2 text-xs sm:text-sm border-sky-500/30 bg-sky-500/10 text-sky-300 hover:bg-sky-500/20 flex items-center gap-2"
+              >
+                <BarChart3 className="w-4 h-4" />
+                <span>{language === "ar" ? "إحصائيات الحملة" : "Campaign Analytics"}</span>
+              </Button>
+            )}
           </div>
         </GlassCard>
 
@@ -468,28 +590,202 @@ export function PostDetailPage() {
             </form>
           </GlassCard>
 
-          {/* Existing Comments List */}
+          {/* Existing Comments List with Threaded Replies */}
           <div className="space-y-3">
-            {comments.map((comm) => (
-              <GlassCard key={comm.id} className="p-4 sm:p-5 bg-card/30 border-white/5 rounded-2xl">
-                <div className="flex items-start gap-3">
-                  <img
-                    src={comm.avatar}
-                    alt={comm.author}
-                    className="w-9 h-9 rounded-full object-cover shrink-0 ring-1 ring-white/10"
-                  />
-                  <div className="flex-1 space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-white">{comm.author}</span>
-                      <span className="text-[11px] text-muted-foreground">{comm.time}</span>
+            {comments.map((comm) => {
+              const canEdit =
+                (comm as any).can_edit ||
+                (user && comm.author === user.name) ||
+                (user && user.role === "candidate" && comm.author.includes("أحمد"))
+              const isOwnerOrAdmin =
+                user?.role === "admin" ||
+                (user && user.role === post?.accountType) ||
+                (user && post?.author?.username && user.email?.includes(post.author.username))
+              const canDelete =
+                (comm as any).can_delete || canEdit || isOwnerOrAdmin
+
+              return (
+                <GlassCard key={comm.id} className="p-4 sm:p-5 bg-card/30 border-white/5 rounded-2xl space-y-3">
+                  <div className="flex items-start gap-3">
+                    <img
+                      src={
+                        comm.avatar ||
+                        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop"
+                      }
+                      alt={comm.author}
+                      className="w-9 h-9 rounded-full object-cover shrink-0 ring-1 ring-white/10"
+                    />
+                    <div className="flex-1 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-white">{comm.author}</span>
+                          {comm.userType && (
+                            <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-white/10 text-slate-300">
+                              {comm.userType}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] text-muted-foreground">{comm.time}</span>
+                          {canEdit && (
+                            <button
+                              onClick={() => {
+                                setEditingCommentId(comm.id)
+                                setEditText(comm.text || comm.content || "")
+                              }}
+                              className="p-1 rounded text-muted-foreground hover:text-sky-300"
+                              title="Edit comment"
+                            >
+                              <Edit2 className="w-3 h-3" />
+                            </button>
+                          )}
+                          {canDelete && (
+                            <button
+                              onClick={() => handleDeleteComment(comm.id)}
+                              className="p-1 rounded text-muted-foreground hover:text-rose-400"
+                              title="Delete comment"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {editingCommentId === comm.id ? (
+                        <div className="space-y-2 pt-1">
+                          <textarea
+                            rows={2}
+                            value={editText}
+                            onChange={(e) => setEditText(e.target.value)}
+                            className="w-full p-2 rounded-xl bg-black/40 border border-primary/40 text-white text-xs focus:outline-none resize-none"
+                          />
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => setEditingCommentId(null)}
+                              className="h-7 text-xs text-muted-foreground"
+                            >
+                              {language === "ar" ? "إلغاء" : "Cancel"}
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => handleSaveEdit(comm.id)}
+                              disabled={isSubmittingEdit}
+                              className="h-7 text-xs bg-primary text-white"
+                            >
+                              {language === "ar" ? "حفظ" : "Save"}
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-xs sm:text-sm text-slate-300 leading-relaxed whitespace-pre-line">
+                          {comm.text || comm.content}
+                        </p>
+                      )}
+
+                      {/* Reply button */}
+                      <div className="pt-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setReplyingToId(replyingToId === comm.id ? null : comm.id)
+                            setReplyText("")
+                          }}
+                          className="text-[11px] font-semibold text-primary hover:underline flex items-center gap-1"
+                        >
+                          <CornerDownLeft className="w-3 h-3" />
+                          <span>{language === "ar" ? "رد" : "Reply"}</span>
+                        </button>
+                      </div>
+
+                      {/* Inline Reply Box */}
+                      {replyingToId === comm.id && (
+                        <div className="p-2.5 rounded-xl bg-white/5 border border-primary/20 space-y-2 mt-2">
+                          <textarea
+                            rows={2}
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                            placeholder={language === "ar" ? `رد على ${comm.author}...` : `Reply to ${comm.author}...`}
+                            className="w-full p-2 rounded-lg bg-black/30 border border-white/10 text-white text-xs focus:outline-none resize-none"
+                          />
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => setReplyingToId(null)}
+                              className="h-7 text-xs text-muted-foreground"
+                            >
+                              {language === "ar" ? "إلغاء" : "Cancel"}
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => handleAddReply(comm.id)}
+                              disabled={isSubmittingReply || !replyText.trim()}
+                              className="h-7 text-xs bg-primary text-white"
+                            >
+                              {language === "ar" ? "إرسال" : "Reply"}
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Nested Replies */}
+                      {comm.replies && comm.replies.length > 0 && (
+                        <div className="ps-4 pt-2 space-y-2 border-s-2 border-primary/30 mt-2">
+                          {comm.replies.map((reply) => {
+                            const canEditReply =
+                              (reply as any).can_edit ||
+                              (user && reply.author === user.name)
+                            const canDeleteReply =
+                              (reply as any).can_delete || canEditReply || isOwnerOrAdmin
+
+                            return (
+                              <div key={reply.id} className="p-2.5 rounded-xl bg-white/5 space-y-1">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <img
+                                      src={reply.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop"}
+                                      alt={reply.author}
+                                      className="w-6 h-6 rounded-full object-cover"
+                                    />
+                                    <span className="text-[11px] font-bold text-white">{reply.author}</span>
+                                    <span className="text-[9px] text-muted-foreground">{reply.time}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    {canEditReply && (
+                                      <button
+                                        onClick={() => {
+                                          setEditingCommentId(reply.id)
+                                          setEditText(reply.text || reply.content || "")
+                                        }}
+                                        className="p-0.5 text-muted-foreground hover:text-sky-300"
+                                      >
+                                        <Edit2 className="w-3 h-3" />
+                                      </button>
+                                    )}
+                                    {canDeleteReply && (
+                                      <button
+                                        onClick={() => handleDeleteComment(reply.id)}
+                                        className="p-0.5 text-muted-foreground hover:text-rose-400"
+                                      >
+                                        <Trash2 className="w-3 h-3" />
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+                                <p className="text-xs text-slate-200">{reply.text || reply.content}</p>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )}
+
                     </div>
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed whitespace-pre-line">
-                      {comm.text}
-                    </p>
                   </div>
-                </div>
-              </GlassCard>
-            ))}
+                </GlassCard>
+              )
+            })}
           </div>
         </div>
 
@@ -541,6 +837,24 @@ export function PostDetailPage() {
         )}
 
       </div>
+
+      {/* Share / Repost Modal */}
+      <CampaignShareModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        post={post}
+        onShared={(_id, count) => {
+          if (post) setPost({ ...post, sharesCount: count })
+        }}
+      />
+
+      {/* Analytics Modal */}
+      <CampaignAnalyticsModal
+        isOpen={isAnalyticsOpen}
+        onClose={() => setIsAnalyticsOpen(false)}
+        campaignId={post?.id || 0}
+        campaignTitle={post?.title}
+      />
     </div>
   )
 }

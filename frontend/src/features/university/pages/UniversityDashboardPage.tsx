@@ -7,6 +7,7 @@ import { universityService } from "../services/university.service"
 import { StudentAcademicCard } from "../components/StudentAcademicCard"
 import { VerificationModal } from "../components/VerificationModal"
 import { EmploymentKPIsCard } from "../components/EmploymentKPIsCard"
+import { GraduateEmploymentInsightsSection } from "../../market-insights/components/GraduateEmploymentInsightsSection"
 import { ROUTES } from "@/config/routes"
 import { tl } from "../utils/universityLocalization"
 import type { UniversityStudentItem, GraduateEmploymentKPIs } from "../types/university.types"
@@ -186,7 +187,7 @@ const DEFAULT_DASHBOARD_DATA: UniversityDashboardData = {
 
 export function UniversityDashboardPage() {
   const { isRTL, language } = useTranslation()
-  const { data, isLoading, error } = useUniversityDashboard()
+  const { data, isLoading } = useUniversityDashboard()
   const { directVerifyStudent, isDirectVerifying } = useUniversityActions()
 
   const [verifyTarget, setVerifyTarget] = useState<UniversityStudentItem | null>(null)
@@ -458,6 +459,9 @@ export function UniversityDashboardPage() {
 
       {/* Graduate Employment & Employability Performance Indicators (KPIs) Dashboard */}
       <EmploymentKPIsCard kpis={kpis || defaultKpis} isRtl={isRTL} />
+
+      {/* Graduate Employment & Market Insights (Aggregated & Anonymized) */}
+      <GraduateEmploymentInsightsSection universityId={institution?.id} />
 
       {/* 3 Core University Ecosystem Features Hub */}
       <div className="grid gap-5 md:grid-cols-3">

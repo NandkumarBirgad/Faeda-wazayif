@@ -87,16 +87,20 @@ def get_qs_university_rank_string(user_university_name: str) -> str:
     """Return a string representing the QS university rank."""
     if not user_university_name:
         return "غير مصنفة"
-    df = _load_qs_data()
-    if df.empty:
+    data = _load_qs_data()
+    if not data:
         return "غير مصنفة"
-    institutions = df["Institution Name"].astype(str).tolist()
+    institutions = [str(r.get("Institution Name", "")) for r in data if r.get("Institution Name")]
+    if not institutions:
+        return "غير مصنفة"
     match, score = process.extractOne(user_university_name, institutions, scorer=fuzz.ratio) or (None, 0)
     if score < 80 or match is None:
         return "غير مصنفة"
     try:
-        rank_val = df.loc[df["Institution Name"] == match, "2025 Rank"].iloc[0]
-        return str(rank_val)
+        matched_row = next((r for r in data if r.get("Institution Name") == match), None)
+        if matched_row and matched_row.get("2025 Rank"):
+            return f"#{matched_row.get('2025 Rank')}"
+        return "غير مصنفة"
     except Exception:
         return "غير مصنفة"
 

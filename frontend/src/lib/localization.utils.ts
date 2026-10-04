@@ -736,6 +736,288 @@ Concrete metrics immediately validate your market value.`,
       ar: "مهندسة معمارية للبنية السحابية | مرشدة تقنية",
     },
   },
+  "101": {
+    title: {
+      en: "Research Paper: Advancing Arabic NLP Performance for Industrial Environments",
+      hi: "शोध पत्र: औद्योगिक वातावरण में अरबी एनएलपी प्रदर्शन में सुधार",
+      ar: "ورقة بحثية: تحسين أداء نماذج معالجة اللغة الطبيعية للغة العربية في البيئات الصناعية",
+    },
+    summary: {
+      en: "KFUPM researchers published a peer-reviewed study on training large language models on industrial engineering data with high fidelity.",
+      hi: "केएफयूपीएम ने उच्च सटीकता के साथ औद्योगिक डेटा पर बड़े भाषा मॉडल को प्रशिक्षित करने पर एक अध्ययन प्रकाशित किया।",
+      ar: "نشرت جامعة الملك فهد للبترول والمعادن دراسة بحثية محكمة حول تقنيات تدريب النماذج اللغوية الضخمة على اللهجات والبيانات الهندسية بدقة فائقة.",
+    },
+    category: { en: "Research & Innovation", hi: "अनुसंधान और नवाचार", ar: "الأبحاث والابتكار" },
+    readTime: { en: "6 min read", hi: "6 मिनट पठन", ar: "6 دقائق قراءة" },
+    authorName: { en: "King Fahd University (KFUPM)", hi: "किंग फहद विश्वविद्यालय (KFUPM)", ar: "جامعة الملك فهد للبترول والمعادن" },
+    authorTitle: { en: "Center of Excellence in AI Research", hi: "एआई अनुसंधान में उत्कृष्टता केंद्र", ar: "مركز التميز لأبحاث الذكاء الاصطناعي" },
+  },
+  "102": {
+    title: {
+      en: "Annual Career Fair & Graduate Match Day 2026: 85+ Leading Companies Participating",
+      hi: "वार्षिक रोजगार मेला और स्नातक मिलान दिवस 2026: 85+ प्रमुख कंपनियां शामिल",
+      ar: "ملتقى التوظيف السنوي وربط الخريجين 2026: بمشاركة أكثر من 85 شركة رائدة",
+    },
+    summary: {
+      en: "King Saud University connects over 1,500 students with hiring managers from top domestic and global enterprises.",
+      hi: "किंग सऊद विश्वविद्यालय 1,500 से अधिक छात्रों को शीर्ष उद्यमों के प्रबंधकों से जोड़ता है।",
+      ar: "تنظم عمادة شؤون الطلاب ملتقى التوظيف والتدريب التعاوني لربط أكثر من 1,500 طالب وطالبة بمسؤولي التوظيف المباشر في كبرى الشركات الوطنية والدولية.",
+    },
+    category: { en: "Job Fairs", hi: "रोजगार मेला", ar: "معارض التوظيف" },
+    readTime: { en: "4 min read", hi: "4 मिनट पठन", ar: "4 دقائق قراءة" },
+    authorName: { en: "King Saud University (KSU)", hi: "किंग सऊद विश्वविद्यालय", ar: "جامعة الملك سعود" },
+    authorTitle: { en: "Deanship of Career Development", hi: "करियर विकास डीनशिप", ar: "عمادة التطوير المهني وشؤون الخريجين" },
+  },
+  "103": {
+    title: {
+      en: "Academic Milestone: Full International ABET Accreditation Renewal through 2032",
+      hi: "शैक्षणिक उपलब्धि: 2032 तक पूर्ण अंतर्राष्ट्रीय एबीईटी (ABET) मान्यता नवीनीकरण",
+      ar: "إنجاز أكاديمي: تجديد الاعتماد الدولي الكامل ABET لكافة البرامج الهندسية والحاسوبية",
+    },
+    summary: {
+      en: "Princess Nourah University secures prestigious global accreditation confirming curriculum alignment with industry standards.",
+      hi: "प्रिंसेस नूरा यूनिवर्सिटी ने उद्योग मानकों के साथ संरेखण की पुष्टि करते हुए वैश्विक मान्यता प्राप्त की।",
+      ar: "حصدت الجامعة الاعتماد الأكاديمي الدولي المرموق تأكيداً على جودة المخرجات ومواءمة البرامج مع أحدث المعايير الصناعية العالمية.",
+    },
+    category: { en: "Academic Achievements", hi: "शैक्षणिक उपलब्धियां", ar: "الإنجازات الأكاديمية" },
+    readTime: { en: "3 min read", hi: "3 मिनट पठन", ar: "3 دقائق قراءة" },
+    authorName: { en: "Princess Nourah University (PNU)", hi: "प्रिंसेस नूरा विश्वविद्यालय", ar: "جامعة الأميرة نورة" },
+    authorTitle: { en: "Academic Affairs & Quality Assurance", hi: "शैक्षणिक मामले और गुणवत्ता आश्वासन", ar: "وكالة الشؤون الأكاديمية وضمان الجودة" },
+  },
+  "104": {
+    title: {
+      en: "Innovation Incubator: 12 New Tech Patents Filed for Student IoT & Smart City Projects",
+      hi: "नवाचार इनक्यूबेटर: छात्र आईओटी और स्मार्ट सिटी परियोजनाओं के लिए 12 नए पेटेंट",
+      ar: "حاضنة الابتكار: تسجيل 12 براءة اختراع لطلاب الجامعة في إنترنت الأشياء والمدن الذكية",
+    },
+    summary: {
+      en: "High-potential graduation capstones transition into funded startups backed by the university incubation ecosystem.",
+      hi: "विश्वविद्यालय इनक्यूबेशन द्वारा समर्थित उच्च क्षमता वाले प्रोजेक्ट स्टार्टअप में बदल रहे हैं।",
+      ar: "مشاريع تخرج رائدة تتحول إلى شركات ناشئة واعدة مدعومة بحاضنة الأعمال الجامعية ومنظومة الابتكار والملكية الفكرية.",
+    },
+    category: { en: "Innovation & Projects", hi: "नवाचार और परियोजनाएं", ar: "الابتكار والمشاريع" },
+    readTime: { en: "5 min read", hi: "5 मिनट पठन", ar: "5 دقائق قراءة" },
+    authorName: { en: "King Abdulaziz University (KAU)", hi: "किंग अब्दुलअजीज विश्वविद्यालय", ar: "جامعة الملك عبد العزيز" },
+    authorTitle: { en: "Center for Innovation & Entrepreneurship", hi: "नवाचार और उद्यमिता केंद्र", ar: "مركز الابتكار وريادة الأعمال" },
+  },
+  "105": {
+    title: {
+      en: "Student Team Wins 1st Place at International Robotics & Autonomous Systems Olympiad in Tokyo",
+      hi: "टोक्यो में अंतर्राष्ट्रीय रोबोटिक्स ओलंपियाड में छात्र टीम ने पहला स्थान जीता",
+      ar: "فريق طلابي يحصد المركز الأول في أولمبياد الروبوتات والأنظمة الذكية الدولية في طوكيو",
+    },
+    summary: {
+      en: "Global triumph for Saudi youth competing against 40+ international universities in autonomous vehicle intelligence.",
+      hi: "स्वायत्त वाहन तकनीक में 40 से अधिक अंतर्राष्ट्रीय विश्वविद्यालयों के साथ प्रतिस्पर्धा में सऊदी युवाओं की वैश्विक विजय।",
+      ar: "تتويج عالمي للشباب السعودي بعد منافسة قوية مع أكثر من 40 جامعة دولية في تصميم وبرمجة المركبات الذاتية القيادة.",
+    },
+    category: { en: "Global Awards", hi: "वैश्विक पुरस्कार", ar: "جوائز وتكريم" },
+    readTime: { en: "4 min read", hi: "4 मिनट पठन", ar: "4 دقائق قراءة" },
+    authorName: { en: "Imam Abdulrahman Bin Faisal University", hi: "इमाम अब्दुलरहमान बिन फैसल विश्वविद्यालय", ar: "جامعة الإمام عبد الرحمن بن فيصل" },
+    authorTitle: { en: "Deanship of Scientific Research", hi: "वैज्ञानिक अनुसंधान डीनशिप", ar: "عمادة البحث العلمي والابتكار" },
+  },
+  "201": {
+    title: {
+      en: "National General Hiring Campaign: 150+ Open Positions Across Technical & Operations Divisions",
+      hi: "राष्ट्रीय सामान्य भर्ती अभियान: तकनीकी और संचालन डिवीजनों में 150+ खुले पद",
+      ar: "حملة التوظيف الوطنية الشاملة: فتح باب التقديم لأكثر من 150 شاغراً وظيفياً في مختلف الفروع",
+    },
+    summary: {
+      en: "Elm announces open recruitment drives for fresh graduates and experienced professionals across Riyadh, Jeddah, and Dammam.",
+      hi: "एल्म ने रियाद, जेद्दा और दम्माम में फ्रेशर्स और अनुभवी पेशेवरों के लिए खुली भर्ती की घोषणा की।",
+      ar: "تعلن شركة علم عن إطلاق حملة استقطاب عامة تستهدف حديثي التخرج وذوي الخبرة في مجالات التقنية والعمليات.",
+    },
+    category: { en: "Talent Acquisition", hi: "प्रतिभा अधिग्रहण", ar: "استقطاب كفاءات" },
+    readTime: { en: "4 min read", hi: "4 मिनट पठन", ar: "4 دقائق قراءة" },
+    authorName: { en: "Elm Company", hi: "एल्म कंपनी", ar: "شركة علم (Elm)" },
+    authorTitle: { en: "National Talent Acquisition Team", hi: "राष्ट्रीय प्रतिभा अधिग्रहण टीम", ar: "إدارة استقطاب المواهب والتوظيف الوطني" },
+  },
+  "202": {
+    title: {
+      en: "Specialized Talent Search: High-Performance AI Engineers & Sovereign Cloud Architects",
+      hi: "विशिष्ट प्रतिभा खोज: उच्च-प्रदर्शन एआई इंजीनियर और सॉवरेन क्लाउड आर्किटेक्ट",
+      ar: "نبحث عن مهندسي ذكاء اصطناعي وبنية سحابية سيادية (LLMOps & Cloud Infrastructure)",
+    },
+    summary: {
+      en: "Advanced engineering careers at Aramco Digital powering hyper-scale computing and industrial foundational models.",
+      hi: "अरामको डिजिटल में उन्नत इंजीनियरिंग करियर जो बड़े पैमाने पर कंप्यूटिंग को शक्ति प्रदान करता है।",
+      ar: "فرص هندسية متقدمة في أرامكو الرقمية لبناء حلول الحوسبة الفائقة ونماذج الذكاء الاصطناعي الصناعية الكبرى.",
+    },
+    category: { en: "Talent Acquisition", hi: "प्रतिभा अधिग्रहण", ar: "استقطاب كفاءات" },
+    readTime: { en: "5 min read", hi: "5 मिनट पठन", ar: "5 دقائق قراءة" },
+    authorName: { en: "Aramco Digital", hi: "अरामको डिजिटल", ar: "أرامكو الرقمية (Aramco Digital)" },
+    authorTitle: { en: "Advanced Engineering Recruiting Team", hi: "उन्नत इंजीनियरिंग भर्ती टीम", ar: "فريق توظيف الكفاءات الهندسية المتقدمة" },
+  },
+  "203": {
+    title: {
+      en: "Inside Tabby Culture: Cultivating High-Agency Teams, Autonomy, and Hyper-Growth",
+      hi: "टैबी संस्कृति के अंदर: उच्च-एजेंसी टीमों, स्वायत्तता और तीव्र विकास को बढ़ावा देना",
+      ar: "داخل ثقافة تابي: كيف نبني بيئة عمل مرنة تكافئ روح المبادرة والنمو السريع؟",
+    },
+    summary: {
+      en: "An exclusive look at psychological safety, asynchronous collaboration, and flexible work making Tabby an employer of choice.",
+      hi: "मनोवैज्ञानिक सुरक्षा, लचीले काम पर एक विशेष नज़र जो टैबी को पसंदीदा नियोक्ता बनाती है।",
+      ar: "نظرة حصرية على نمط العمل المرن، الدعم النفسي والمهني، والتمكين القيادي الذي يجعل من تابي الوجهة المفضلة للمبدعين.",
+    },
+    category: { en: "Workplace & Culture", hi: "कार्यस्थल और संस्कृति", ar: "بيئة وثقافة العمل" },
+    readTime: { en: "5 min read", hi: "5 मिनट पठन", ar: "5 دقائق قراءة" },
+    authorName: { en: "Tabby", hi: "टैबी", ar: "شركة تابي (Tabby)" },
+    authorTitle: { en: "People, Culture & Employer Branding", hi: "लोग, संस्कृति और एम्प्लॉयर ब्रांडिंग", ar: "فريق ثقافة المنشأة وهوية صاحب العمل" },
+  },
+  "204": {
+    title: {
+      en: "Building Future Talent Communities: Cooperative Training & Early Career Programs",
+      hi: "भावी टैलेंट कम्युनिटी का निर्माण: सहकारी प्रशिक्षण और शुरुआती करियर कार्यक्रम",
+      ar: "انضم إلى مجتمع المواهب المستقبلي: برنامج التدريب التعاوني والمتابعة المهنية المبكرة",
+    },
+    summary: {
+      en: "Thiqah opens applications for student developers and business analysts to join hands-on mentorship cohorts.",
+      hi: "सिका (Thiqah) ने मेंटरशिप और व्यावहारिक परियोजनाओं के लिए आवेदन खोले।",
+      ar: "نفتح أبواب التسجيل في مجتمع المواهب الرقمي للطلاب والمطورين الواعدين للحصول على إرشاد مهني مباشر.",
+    },
+    category: { en: "Talent Community", hi: "टैलेंट कम्युनिटी", ar: "قاعدة المواهب" },
+    readTime: { en: "4 min read", hi: "4 मिनट पठन", ar: "4 دقائق قراءة" },
+    authorName: { en: "Thiqah Business Solutions", hi: "सिका बिजनेस सॉल्यूशंस", ar: "شركة ثقة (Thiqah)" },
+    authorTitle: { en: "Early Talent & People Development", hi: "शुरुआती प्रतिभा और मानव संसाधन विकास", ar: "برامج الكفاءات المبكرة وتطوير المواهب" },
+  },
+  "205": {
+    title: {
+      en: "Meet the Team: VP of Data Engineering on Scaling Real-Time Order Processing to Millions",
+      hi: "टीम से मिलें: लाखों रियल-टाइम ऑर्डर प्रोसेसिंग को स्केल करने पर डेटा इंजीनियरिंग प्रमुख",
+      ar: "لقاء مع رئيس هندسة البيانات: كيف نعالج ملايين المعاملات اللحظية بأعلى موثوقية؟",
+    },
+    summary: {
+      en: "Behind the scenes with Jahez engineering leaders discussing high availability, resilient microservices, and team culture.",
+      hi: "जाहेज़ इंजीनियरिंग लीडर्स के साथ उच्च उपलब्धता और टीम संस्कृति पर चर्चा।",
+      ar: "سلسلة التعريف بقيادات وفرق جاهز: حوار صريح حول البنية التحتية البرمجية، التحديات التشغيلية، وروح الفريق.",
+    },
+    category: { en: "Team & Leadership", hi: "टीम और नेतृत्व", ar: "فريق العمل والقيادات" },
+    readTime: { en: "6 min read", hi: "6 मिनट पठन", ar: "6 دقائق قراءة" },
+    authorName: { en: "Jahez International", hi: "जाहेज़ इंटरनेशनल", ar: "جاهز الدولية (Jahez)" },
+    authorTitle: { en: "Tech Spotlight & Communications", hi: "तकनीकी स्पॉटलाइट और संचार", ar: "فريق الإعلام الرقمي والتواصل الداخلي" },
+  },
+  "206": {
+    title: {
+      en: "Engineering Breakthrough: Next-Gen Dispatching Engine Cuts Delivery Matching by 65%",
+      hi: "इंजीनियरिंग सफलता: नेक्स्ट-जेन डिस्पैचिंग इंजन डिलीवरी मैचिंग को 65% तक कम करता है",
+      ar: "إطلاق محرك التوصيل الذكي: خفض زمن مطابقة الشحنات بنسبة 65% بالاعتماد على الذكاء الاصطناعي",
+    },
+    summary: {
+      en: "HungerStation tech teams detail the reinforcement learning algorithms driving sub-40ms rider assignments.",
+      hi: "हंगरस्टेशन टेक टीम ने सब-40ms ड्राइवर असाइनमेंट चलाने वाले सुदृढीकरण सीखने के एल्गोरिदम का विवरण दिया।",
+      ar: "إنجاز تقني بارز حققه مهندسو هنقرستيشن بتطوير خوارزمية ذكية لمطابقة الطلبات مع السائقين في أقل من 40 ميلي ثانية.",
+    },
+    category: { en: "Innovation & Projects", hi: "नवाचार और परियोजनाएं", ar: "الابتكار والمشاريع" },
+    readTime: { en: "5 min read", hi: "5 मिनट पठन", ar: "5 دقائق قراءة" },
+    authorName: { en: "HungerStation", hi: "हंगरस्टेशन", ar: "هنقرستيشن (HungerStation)" },
+    authorTitle: { en: "Technology & Digital Innovation", hi: "प्रौद्योगिकी और डिजिटल नवाचार", ar: "فريق التكنولوجيا والابتكار الرقمي" },
+  },
+  "207": {
+    title: {
+      en: "Sovereign Digital Infrastructure: The Future of Cloud Regions & Knowledge Economy 2030",
+      hi: "सॉवरेन डिजिटल इन्फ्रास्ट्रक्चर: क्लाउड क्षेत्रों और ज्ञान अर्थव्यवस्था 2030 का भविष्य",
+      ar: "رسالة في السيادة الرقمية: مستقبل البنية التحتية السحابية ومراكز البيانات الوطنية 2030",
+    },
+    summary: {
+      en: "Strategic outlook on hyperscale data sovereignty, localized foundation models, and regional tech hegemony.",
+      hi: "हाइपरस्केल डेटा संप्रभुता, स्थानीय एआई मॉडल और क्षेत्रीय तकनीकी नेतृत्व पर रणनीतिक दृष्टिकोण।",
+      ar: "رؤية استراتيجية حول تمكين الاقتصاد الرقمي، توطين تقنيات السحابة المتقدمة، وحماية البيانات السيادية.",
+    },
+    category: { en: "Vision 2030", hi: "विजन 2030", ar: "رؤية 2030" },
+    readTime: { en: "7 min read", hi: "7 मिनट पठन", ar: "7 دقائق قراءة" },
+    authorName: { en: "stc Group", hi: "एसटीसी ग्रुप (stc)", ar: "مجموعة stc" },
+    authorTitle: { en: "Strategy & Corporate Transformation", hi: "रणनीति और कॉर्पोरेट परिवर्तन", ar: "قطاع الاستراتيجية والتحول المؤسسي" },
+  },
+  "301": {
+    title: {
+      en: "Project Showcase: Building an Open-Source Semantic ATS Resume Evaluator with FastAPI & pgvector",
+      hi: "प्रोजेक्ट शोकेस: FastAPI और pgvector के साथ एक ओपन-सोर्स सिमेंटिक ATS मूल्यांकनकर्ता बनाना",
+      ar: "استعراض مشروع: بناء محرك فحص وتنسيق تلقائي للسير الذاتية بالذكاء الاصطناعي (ATS Evaluator)",
+    },
+    summary: {
+      en: "Code and architecture deep dive into an open-source tool scoring resume semantic relevance against job descriptions.",
+      hi: "जॉब विवरण के विरुद्ध बायोडाटा की सिमेंटिक प्रासंगिकता स्कोर करने वाले एक ओपन-सोर्स टूल का आर्किटेक्चर।",
+      ar: "شاركت كود وهيكلية مشروع تخرجي: تطبيق مفتوح المصدر يحلل التوافق الدلالي للسيرة الذاتية مع إعلانات التوظيف بدقة 94%.",
+    },
+    category: { en: "Projects & Portfolio", hi: "परियोजनाएं और पोर्टफोलियो", ar: "المشاريع والأعمال" },
+    readTime: { en: "5 min read", hi: "5 मिनट पठन", ar: "5 دقائق قراءة" },
+    authorName: { en: "Mohammed Al-Otaibi", hi: "मोहम्मद अल-ओतैबी", ar: "محمد العتيبي" },
+    authorTitle: { en: "Full-Stack & Applied ML Engineer", hi: "फुल-स्टैक और एमएल इंजीनियर", ar: "مطور Full-Stack ومهندس تعلم آلة" },
+  },
+  "302": {
+    title: {
+      en: "Open to Work: Certified Cybersecurity & Penetration Tester (OSCP, CEH) in Riyadh or Remote",
+      hi: "नौकरी के लिए उपलब्ध: प्रमाणित साइबर सुरक्षा और पैनेट्रेशन परीक्षक (OSCP, CEH) रियाद या रिमोट",
+      ar: "متاحة لفرص العمل: مهندسة أمن سيبراني واختبار اختراق معتمدة (OSCP, CEH) في الرياض أو عن بعد",
+    },
+    summary: {
+      en: "With 4 years auditing banking infrastructures, available for Red Team lead and security engineer roles.",
+      hi: "बैंकिंग बुनियादी ढांचे के ऑडिटिंग के 4 साल के अनुभव के साथ, रेड टीम लीड भूमिकाओं के लिए उपलब्ध।",
+      ar: "بعد 4 سنوات من العمل على تأمين التطبيقات البنكية واختبار الاختراق، أبحث عن تحدٍ جديد كمسؤولة أمن سيبراني.",
+    },
+    category: { en: "Open to Work", hi: "काम के लिए उपलब्ध", ar: "متاح للعمل" },
+    readTime: { en: "3 min read", hi: "3 मिनट पठन", ar: "3 دقائق قراءة" },
+    authorName: { en: "Renad Al-Dawsari", hi: "रेनाद अल-दौसारी", ar: "ريناد الدوسري" },
+    authorTitle: { en: "Certified InfoSec & Penetration Tester", hi: "प्रमाणित सूचना सुरक्षा परीक्षक", ar: "مهندسة أمن معلومات واختبار اختراق معتمدة" },
+  },
+  "303": {
+    title: {
+      en: "How I Passed the AWS Solutions Architect Professional in 90 Days: Study Roadmap & Free Labs",
+      hi: "मैंने 90 दिनों में एडब्ल्यूएस सॉल्यूशंस आर्किटेक्ट प्रोफेशनल कैसे पास किया: रोडमैप और मुफ्त लैब",
+      ar: "رحلتي لاجتياز شهادة AWS Solutions Architect Professional في 90 يوماً: الخطة والمصادر المجانية",
+    },
+    summary: {
+      en: "Structured study guide, real-world scenario breakdown, and hands-on cheat sheets for one of the toughest cloud exams.",
+      hi: "सबसे कठिन क्लाउड परीक्षाओं में से एक के लिए संरचित अध्ययन मार्गदर्शिका और व्यावहारिक चीट शीट।",
+      ar: "توثيق شامل لخطة المذاكرة، الاختبارات التجريبية، والنصائح العملية التي ساعدتني في الحصول على الشهادة.",
+    },
+    category: { en: "Certifications", hi: "प्रमाणपत्र", ar: "الشهادات المهنية" },
+    readTime: { en: "6 min read", hi: "6 मिनट पठन", ar: "6 دقائق قراءة" },
+    authorName: { en: "Sultan Al-Harbi", hi: "सुल्तान अल-हरबी", ar: "سلطان الحربي" },
+    authorTitle: { en: "Certified Cloud Architect", hi: "प्रमाणित क्लाउड आर्किटेक्ट", ar: "مهندس بنية سحابية معتمد" },
+  },
+}
+
+export function getLocalizedAccountType(
+  accountType: "university" | "company" | "candidate" | "all" | string | undefined,
+  lang: Language
+): string {
+  if (accountType === "university") {
+    return lang === "ar" ? "جامعة" : lang === "hi" ? "विश्वविद्यालय" : "University"
+  }
+  if (accountType === "company") {
+    return lang === "ar" ? "منشأة / شركة" : lang === "hi" ? "कंपनी" : "Company"
+  }
+  if (accountType === "candidate") {
+    return lang === "ar" ? "باحث عن عمل" : lang === "hi" ? "नौकरी चाहने वाला" : "Job Seeker"
+  }
+  return lang === "ar" ? "الجميع" : lang === "hi" ? "सभी" : "All Accounts"
+}
+
+export function getLocalizedPostType(postType: string | undefined, lang: Language): string {
+  if (!postType) return ""
+  const map: Record<string, { ar: string; en: string; hi: string }> = {
+    // University
+    research_paper: { ar: "أوراق بحثية ودراسات", en: "Research Paper", hi: "शोध पत्र" },
+    job_fair: { ar: "معرض توظيف ويوم مهني", en: "Job Fair & Career Day", hi: "रोजगार मेला" },
+    achievement: { ar: "إنجاز واعتماد أكاديمي", en: "Academic Achievement", hi: "शैक्षणिक उपलब्धि" },
+    innovation: { ar: "ابتكار وبراءة اختراع", en: "Innovation & Patents", hi: "नवाचार और पेटेंट" },
+    awards: { ar: "جوائز وتصنيفات دولية", en: "International Awards", hi: "अंतर्राष्ट्रीय पुरस्कार" },
+    // Company
+    hiring_general: { ar: "بحث عام عن كفاءات", en: "General Talent Hiring", hi: "सामान्य भर्ती" },
+    hiring_specialized: { ar: "استقطاب كفاءات تخصصية", en: "Specialized Talent Search", hi: "विशिष्ट प्रतिभा खोज" },
+    brand_image: { ar: "ثقافة وبيئة العمل", en: "Brand & Culture", hi: "ब्रांड और कार्य संस्कृति" },
+    talent_pool: { ar: "بناء قاعدة مواهب مستقبلية", en: "Talent Community", hi: "टैलेंट पूल" },
+    team_spotlight: { ar: "التعريف بالفريق والقيادات", en: "Meet the Team", hi: "टीम और नेतृत्व" },
+    company_innovation: { ar: "إنجازات وابتكارات الشركة", en: "Corporate Innovations", hi: "कंपनी नवाचार" },
+    thought_leadership: { ar: "رسالة علمية وصناعية", en: "Thought Leadership", hi: "वैज्ञानिक संदेश" },
+    // Candidate
+    portfolio_showcase: { ar: "استعراض مشاريع وأعمال", en: "Project Showcase", hi: "प्रोजेक्ट प्रदर्शन" },
+    seeking_work: { ar: "متاح لفرص العمل", en: "Open to Work", hi: "काम के लिए उपलब्ध" },
+    certifications: { ar: "شهادات وإنجازات مهنية", en: "Certifications", hi: "प्रमाणपत्र" },
+    career_tips: { ar: "مقالات وتجارب مهنية", en: "Career Insights & Tips", hi: "करियर सुझाव" },
+  }
+  return map[postType]?.[lang] || map[postType]?.en || postType
 }
 
 export function getLocalizedPost<T extends {

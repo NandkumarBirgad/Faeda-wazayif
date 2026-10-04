@@ -74,7 +74,7 @@ export interface StudentAcademicVerification {
   verification_code: string | null
   verified_at: string | null
   verified_by?: string | null
-  notes: string | null
+  notes?: string | null
 }
 
 export interface UniversityStudentItem {
@@ -295,6 +295,8 @@ export interface UniversityIncubatorVenture {
 
 export interface IncubatorInfo {
   incubator_name: string
+  university_name?: string
+  active_cohort?: string
   location: string
   total_graduated_entrepreneurs: number
   active_startups_count: number
@@ -343,8 +345,12 @@ export interface CoopSupervisedStudent {
   student_major: string // التخصص
   company_name: string // اسم الشركة التي يتدرب فيها
   company_location: string // موقع الشركة الجغرافي
-  trainer_name: string // اسم المدرب الميداني بالشركة
+  partnership_location?: string // مقر الشراكة والتدريب
+  trainer_name: string // اسم المدرب الميداني بالشركة / المشرف المهني
   trainer_specialization: string // تخصص المدرب الميداني
+  job_title?: string // المسمى الوظيفي للمتدرب
+  work_start_time?: string // وقت بدء العمل
+  work_end_time?: string // وقت انتهاء العمل
   trainer_phone?: string
   trainer_email?: string
   training_start_date?: string
@@ -399,13 +405,21 @@ export interface CreateCoopStudentPayload {
   student_major: string
   company_name: string
   company_location: string
+  partnership_location?: string
   trainer_name: string
   trainer_specialization: string
+  job_title?: string
+  work_start_time?: string
+  work_end_time?: string
   trainer_phone?: string
   trainer_email?: string
   total_required_hours?: number
   completed_hours?: number
   notes?: string
+}
+
+export interface UpdateCoopStudentPayload extends Partial<CreateCoopStudentPayload> {
+  status?: string
 }
 
 export interface CoopEvaluationPayload {

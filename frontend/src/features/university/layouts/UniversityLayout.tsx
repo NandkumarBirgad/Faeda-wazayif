@@ -25,6 +25,7 @@ import {
   Lightbulb,
   UserCheck,
   BookOpen,
+  Settings,
 } from "lucide-react"
 import { LanguageSelector } from "@/components/shared/LanguageSelector"
 import faedaWhiteLogo from "@/assets/logos/faeda_white_logo.png"
@@ -175,6 +176,14 @@ export function UniversityLayout() {
           label_hi: "विश्वविद्यालय प्रोफ़ाइल",
           end: false,
         },
+        {
+          to: ROUTES.UNIVERSITY.SETTINGS,
+          icon: Settings,
+          label_ar: "إعدادات المؤسسة",
+          label_en: "Institution Settings",
+          label_hi: "संस्थान सेटिंग",
+          end: false,
+        },
       ],
     },
   ]
@@ -237,6 +246,16 @@ export function UniversityLayout() {
                 {language === "ar" ? "شريك أكاديمي موثق" : language === "hi" ? "सत्यापित शैक्षणिक भागीदार" : "Verified Institution"}
               </div>
             </div>
+
+            {/* Sign Out button — same as Candidate & Company */}
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+              title={language === "ar" ? "تسجيل الخروج" : language === "hi" ? "साइन आउट" : "Sign Out"}
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </header>

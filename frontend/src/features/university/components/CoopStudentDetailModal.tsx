@@ -10,7 +10,7 @@
  * - Tab 5: Official Documents & Accreditation (Certified Letters, Logbooks, Official Printable Certificate)
  */
 import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { useTranslation } from "@/i18n"
 import { tl } from "../utils/universityLocalization"
 import { universityService } from "../services/university.service"
@@ -41,12 +41,9 @@ import {
   ExternalLink,
   Edit3,
   Loader2,
-  Layers,
-  Sparkles,
   ArrowRight,
   ArrowLeft,
-  ChevronRight,
-  AlertCircle,
+  Briefcase,
 } from "lucide-react"
 
 interface CoopStudentDetailModalProps {
@@ -58,6 +55,7 @@ interface CoopStudentDetailModalProps {
   onScheduleVisit?: (student: CoopSupervisedStudent) => void
   onUpdateEvaluation?: (student: CoopSupervisedStudent) => void
   onRefreshStudent?: (updatedStudent: CoopSupervisedStudent) => void
+  onViewAsStudent?: (student: CoopSupervisedStudent) => void
 }
 
 type TabType = "overview" | "logbook" | "evaluation" | "visits" | "documents"
@@ -71,6 +69,7 @@ export function CoopStudentDetailModal({
   onScheduleVisit,
   onUpdateEvaluation,
   onRefreshStudent,
+  onViewAsStudent,
 }: CoopStudentDetailModalProps) {
   const { isRTL, language } = useTranslation()
   const [activeTab, setActiveTab] = useState<TabType>("overview")
@@ -447,8 +446,25 @@ export function CoopStudentDetailModal({
               </div>
             </div>
 
-            {/* Header Right Actions: Print Dossier & Close */}
+            {/* Header Right Actions: View as Student, Print Dossier & Close */}
             <div className="flex items-center gap-2">
+              {onViewAsStudent && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onViewAsStudent(student)
+                    onClose()
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-secondary/40 bg-secondary/20 hover:bg-secondary/30 text-white text-xs font-bold transition-all shadow-sm"
+                  title={tl(language, "عرض لوحة تحكم هذا المتدرب كطالب", "View as Student Portal", "छात्र के रूप में देखें")}
+                >
+                  <GraduationCap className="w-3.5 h-3.5 text-secondary" />
+                  <span className="hidden sm:inline">
+                    {tl(language, "معاينة كطالب", "View as Student", "छात्र के रूप में देखें")}
+                  </span>
+                </button>
+              )}
+
               <button
                 type="button"
                 onClick={() => setIsPrintMode(true)}
@@ -627,6 +643,44 @@ export function CoopStudentDetailModal({
                         <span>{student.trainer_email}</span>
                       </a>
                     )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Partnership, Job Title & Work Schedule Information */}
+              <div className="p-5 rounded-2xl bg-card border border-border space-y-4 shadow-lg">
+                <div className="flex items-center justify-between border-b border-border/80 pb-3">
+                  <span className="text-xs font-bold text-white flex items-center gap-2">
+                    <Briefcase className="w-4 h-4 text-secondary" />
+                    <span>{tl(language, "بيانات الوظيفة ومقر الشراكة وأوقات الدوام", "Position, Partnership Location & Work Hours", "पद, साझेदारी स्थान और कार्य समय")}</span>
+                  </span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-secondary/10 text-secondary border border-secondary/20">
+                    {student.job_title || tl(language, "متدرب مهني متخصص", "Specialized Intern", "विशेषज्ञ इंटर्न")}
+                  </span>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-3 text-xs">
+                  {/* Job Title */}
+                  <div className="p-3 rounded-xl bg-background/50 border border-border/60 space-y-1">
+                    <span className="text-[10px] text-muted-foreground block">{tl(language, "المسمى الوظيفي الميداني", "Job Title / Role", "कार्य पद")}</span>
+                    <span className="font-bold text-white block">{student.job_title || tl(language, "مهندس برمجيات سحابية متدرب", "Cloud Software Intern", "सॉफ्टवेयर इंटर्न")}</span>
+                  </div>
+
+                  {/* Partnership Location */}
+                  <div className="p-3 rounded-xl bg-background/50 border border-border/60 space-y-1">
+                    <span className="text-[10px] text-muted-foreground block">{tl(language, "مقر الشراكة والتدريب", "Partnership Location", "साझेदारी स्थान")}</span>
+                    <span className="font-semibold text-slate-200 block truncate" title={student.partnership_location || student.company_location}>
+                      {student.partnership_location || student.company_location}
+                    </span>
+                  </div>
+
+                  {/* Daily Work Hours */}
+                  <div className="p-3 rounded-xl bg-background/50 border border-border/60 space-y-1">
+                    <span className="text-[10px] text-muted-foreground block">{tl(language, "ساعات الدوام اليومية", "Work Start & End Time", "दैनिक कार्य समय")}</span>
+                    <span className="font-bold text-secondary font-mono flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-secondary" />
+                      <span>{student.work_start_time || "08:00 ص"} - {student.work_end_time || "04:00 م"}</span>
+                    </span>
                   </div>
                 </div>
               </div>

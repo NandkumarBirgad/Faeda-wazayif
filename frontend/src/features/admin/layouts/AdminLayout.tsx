@@ -2,16 +2,19 @@
  * features/admin/layouts/AdminLayout.tsx
  *
  * Master layout for the Faeda Admin Governance Console.
- * Perfectly styled to match the main website's visual texture, ambient glows,
- * deep navy glassmorphism, and official brand components.
+ * Matches the University layout design — dark navy, grouped sidebar, sign-out in footer.
+ * Enhanced with real-time pending moderation badges, glassmorphic telemetry header, and active glows.
  */
 import { useState } from "react"
-import { Outlet, NavLink, Link, useNavigate, useLocation } from "react-router-dom"
+import { Outlet, NavLink, Link, useNavigate } from "react-router-dom"
 import { ROUTES } from "@/config/routes"
 import { useAuthStore } from "@/store/auth.store"
 import { useTranslation } from "@/i18n"
+import { useQuery } from "@tanstack/react-query"
+import { adminService } from "../services/admin.service"
 import {
   LayoutDashboard,
+  Database,
   Users,
   Briefcase,
   ScrollText,
@@ -22,10 +25,10 @@ import {
   Menu,
   X,
   ShieldCheck,
-  ExternalLink,
   ChevronRight,
   ChevronLeft,
   Sparkles,
+  ExternalLink,
 } from "lucide-react"
 import { LanguageSelector } from "@/components/shared/LanguageSelector"
 import faedaWhiteLogo from "@/assets/logos/faeda_white_logo.png"
@@ -35,277 +38,337 @@ export function AdminLayout() {
   const { user, logout } = useAuthStore()
   const { isRTL, language } = useTranslation()
   const navigate = useNavigate()
-  const location = useLocation()
+
+  // Optional background fetch for live sidebar badges (cached, 60s stale)
+  const { data: dashboardData } = useQuery({
+    queryKey: ["admin", "dashboard"],
+    queryFn: () => adminService.getDashboard(),
+    staleTime: 60000,
+  })
+
+  const pendingJobsCount = dashboardData?.stats?.pending_jobs || 0
+  const pendingReportsCount = dashboardData?.stats?.pending_reports || 0
 
   const handleLogout = async () => {
     await logout()
     navigate(ROUTES.AUTH.LOGIN)
   }
 
-  const navItems = [
+  const L = (ar: string, en: string, hi?: string) =>
+    language === "ar" ? ar : language === "hi" ? (hi || en) : en
+
+  const navSections = [
     {
-      to: ROUTES.ADMIN.DASHBOARD,
-      icon: LayoutDashboard,
-      label_ar: "لوحة التحليلات",
-      label_en: "Analytics Dashboard",
-      end: true,
+      title: L("النظرة العامة", "OVERVIEW", "अवलोकन"),
+      items: [
+        {
+          to: ROUTES.ADMIN.DASHBOARD,
+          icon: LayoutDashboard,
+          label: L("لوحة التحليلات", "Analytics Dashboard", "एनालिटिक्स डैशबोर्ड"),
+          end: true,
+          badge: null,
+        },
+      ],
     },
     {
-      to: ROUTES.ADMIN.USERS,
-      icon: Users,
-      label_ar: "إدارة المستخدمين",
-      label_en: "User Management",
-      end: false,
+      title: L("إدارة المستخدمين والمحتوى", "USERS & CONTENT", "उपयोगकर्ता एवं सामग्री"),
+      items: [
+        {
+          to: ROUTES.ADMIN.USERS,
+          icon: Users,
+          label: L("إدارة المستخدمين", "User Management", "उपयोगकर्ता प्रबंधन"),
+          end: false,
+          badge: null,
+        },
+        {
+          to: ROUTES.ADMIN.JOBS,
+          icon: Briefcase,
+          label: L("مراجعة الوظائف", "Job Moderation", "नौकरी समीक्षा"),
+          end: false,
+          badge: pendingJobsCount > 0 ? { count: pendingJobsCount, color: "bg-amber-500/20 text-amber-300 border-amber-500/30" } : null,
+        },
+        {
+          to: ROUTES.ADMIN.CATEGORIES,
+          icon: FolderTree,
+          label: L("الفلاتر والتصنيفات", "Taxonomy & Filters", "वर्गीकरण एवं फ़िल्टर"),
+          end: false,
+          badge: null,
+        },
+      ],
     },
     {
-      to: ROUTES.ADMIN.JOBS,
-      icon: Briefcase,
-      label_ar: "مراجعة الوظائف",
-      label_en: "Job Moderation",
-      end: false,
+      title: L("المراقبة والامتثال", "MONITORING", "निगरानी एवं अनुपालन"),
+      items: [
+        {
+          to: ROUTES.ADMIN.REPORTS,
+          icon: ShieldAlert,
+          label: L("البلاغات وتذاكر الدعم", "Reports & Tickets", "रिपोर्ट एवं टिकट"),
+          end: false,
+          badge: pendingReportsCount > 0 ? { count: pendingReportsCount, color: "bg-rose-500/20 text-rose-300 border-rose-500/30" } : null,
+        },
+        {
+          to: ROUTES.ADMIN.AUDIT_LOGS,
+          icon: ScrollText,
+          label: L("سجل التدقيق الأمني", "Audit Trail", "ऑडिट ट्रेल"),
+          end: false,
+          badge: null,
+        },
+      ],
     },
     {
-      to: ROUTES.ADMIN.CATEGORIES,
-      icon: FolderTree,
-      label_ar: "الفلاتر والتصنيفات",
-      label_en: "Taxonomy & Filters",
-      end: false,
-    },
-    {
-      to: ROUTES.ADMIN.REPORTS,
-      icon: ShieldAlert,
-      label_ar: "البلاغات وتذاكر الدعم",
-      label_en: "Reports & Tickets",
-      end: false,
-    },
-    {
-      to: ROUTES.ADMIN.AUDIT_LOGS,
-      icon: ScrollText,
-      label_ar: "سجل التدقيق",
-      label_en: "Audit Trail",
-      end: false,
-    },
-    {
-      to: ROUTES.ADMIN.SETTINGS,
-      icon: Settings,
-      label_ar: "إعدادات المنصة",
-      label_en: "Platform Settings",
-      end: false,
+      title: L("البيانات والإعدادات", "DATA & SETTINGS", "डेटा एवं सेटिंग्स"),
+      items: [
+        {
+          to: "/admin/market-data",
+          icon: Database,
+          label: L("بيانات السوق والرواتب", "Market & Salary Data", "बाज़ार एवं वेतन डेटा"),
+          end: false,
+          badge: null,
+        },
+        {
+          to: ROUTES.ADMIN.SETTINGS,
+          icon: Settings,
+          label: L("إعدادات المنصة", "Platform Settings", "प्लेटफ़ॉर्म सेटिंग्स"),
+          end: false,
+          badge: null,
+        },
+      ],
     },
   ]
 
-  const ArrowIcon = isRTL ? ChevronLeft : ChevronRight
+  const ChevronIcon = isRTL ? ChevronLeft : ChevronRight
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-primary/30 relative overflow-x-hidden">
-      {/* ── Global Ambient Radial Glows (Same as Home.tsx) ────────── */}
-      <div className="absolute top-[2%] right-[-5%] w-[650px] h-[650px] bg-primary/10 rounded-full blur-[180px] pointer-events-none -z-10" />
-      <div className="absolute top-[30%] left-[-10%] w-[550px] h-[550px] bg-accent/5 rounded-full blur-[160px] pointer-events-none -z-10" />
-      <div className="absolute top-[60%] right-[-5%] w-[600px] h-[600px] bg-[#0A2D8F]/20 rounded-full blur-[170px] pointer-events-none -z-10" />
-      <div className="absolute bottom-0 left-[-5%] w-[600px] h-[600px] bg-cyan-600/5 rounded-full blur-[180px] pointer-events-none -z-10" />
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans" dir={isRTL ? "rtl" : "ltr"}>
+      {/* ── Top Bar ────────────────────────────────────────────────────── */}
+      <header className="sticky top-0 z-40 flex h-20 items-center justify-between border-b border-white/10 bg-[#081628]/95 px-4 md:px-8 backdrop-blur-xl shadow-lg shadow-black/20">
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="p-2 rounded-xl text-muted-foreground hover:text-white hover:bg-card/80 md:hidden"
+            aria-label="Toggle navigation menu"
+          >
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
 
-      {/* ── Topbar / Header (Exact match with Navbar.tsx) ─────────── */}
-      <header className="sticky top-0 z-50 w-full border-b border-white/[0.06] bg-gradient-to-r from-background/95 via-[#0A2D8F]/15 to-background/95 backdrop-blur-2xl transition-all duration-300">
-        <div className="max-w-7xl mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
-          {/* Brand Logo & Console Badge */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
-              aria-label="Toggle Navigation"
-            >
-              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+          <Link to={ROUTES.ADMIN.DASHBOARD} className="flex items-center gap-3 group">
+            <img
+              src={faedaWhiteLogo}
+              alt="Faeda Logo"
+              className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            />
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full bg-primary/15 border border-primary/30 text-secondary">
+              <Sparkles className="w-3 h-3" />
+              {L("لوحة الإدارة والحوكمة", "Admin Console")}
+            </span>
+          </Link>
+        </div>
 
-            <Link to={ROUTES.ADMIN.DASHBOARD} className="flex items-center gap-3 group">
-              <img
-                src={faedaWhiteLogo}
-                alt="Faeda Logo"
-                className="h-9 sm:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-              />
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-primary/15 border border-primary/30 text-primary shadow-sm shadow-primary/20">
-                <Sparkles className="w-3 h-3 text-secondary" />
-                <span>{language === "ar" ? "لوحة الإدارة العليا" : "Executive Admin"}</span>
-              </span>
-            </Link>
-          </div>
+        {/* Right Topbar Controls */}
+        <div className="flex items-center gap-3">
+          {/* View Live Site */}
+          <Link
+            to={ROUTES.PUBLIC.HOME}
+            target="_blank"
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-white px-3 py-1.5 rounded-xl border border-white/10 hover:border-primary/40 hover:bg-card/50 transition-all"
+          >
+            <ExternalLink className="w-3.5 h-3.5 text-primary" />
+            <span>{L("معاينة المنصة", "View Live Site")}</span>
+          </Link>
 
-          {/* Header Right Actions */}
-          <div className="flex items-center gap-2 sm:gap-4">
-            {/* View Live Public Site */}
-            <Link
-              to={ROUTES.PUBLIC.HOME}
-              target="_blank"
-              className="hidden sm:inline-flex items-center gap-2 text-xs font-semibold text-slate-300 hover:text-white px-3.5 py-2 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] hover:border-white/20 transition-all shadow-sm"
-            >
-              <ExternalLink className="w-3.5 h-3.5 text-primary" />
-              <span>{language === "ar" ? "معاينة المنصة" : "View Live Site"}</span>
-            </Link>
+          <LanguageSelector variant="compact" dropdownAlign="end" />
 
-            {/* Language Selector */}
-            <LanguageSelector variant="compact" dropdownAlign="end" />
-
-            {/* Admin User Capsule */}
-            <div className="flex items-center gap-3 pl-3 rtl:pl-0 rtl:pr-3 border-l rtl:border-l-0 rtl:border-r border-white/10">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-primary to-accent border border-primary/40 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-primary/25">
-                {user?.name ? user.name.slice(0, 2).toUpperCase() : "AD"}
-              </div>
-              <div className="hidden md:flex flex-col text-start">
-                <span className="text-xs font-bold text-white flex items-center gap-1 leading-tight">
-                  {user?.name || "مدير النظام"}
-                  <ShieldCheck className="w-3.5 h-3.5 text-secondary" />
-                </span>
-                <span className="text-[10px] text-muted-foreground font-mono">
-                  {user?.email || "admin@faeda.jobs"}
-                </span>
-              </div>
-
-              {/* Logout Button */}
-              <button
-                onClick={handleLogout}
-                className="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all"
-                title={language === "ar" ? "تسجيل الخروج" : "Logout"}
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
+          {/* Admin User Capsule */}
+          <div className="hidden sm:flex items-center gap-2.5 pl-2 rtl:pl-0 rtl:pr-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/30 to-secondary/20 border border-primary/30 text-secondary font-bold text-xs shadow-md">
+              {user?.name ? user.name.slice(0, 2).toUpperCase() : "AD"}
             </div>
+            <div className="text-start">
+              <div className="text-xs font-bold text-white max-w-[140px] truncate flex items-center gap-1">
+                {user?.name || L("مدير النظام", "System Admin")}
+                <ShieldCheck className="w-3.5 h-3.5 text-secondary" />
+              </div>
+              <div className="text-[10px] text-muted-foreground">
+                {user?.email || "admin@faeda.jobs"}
+              </div>
+            </div>
+
+            {/* Sign Out button */}
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+              title={L("تسجيل الخروج", "Sign Out")}
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </header>
 
-      {/* ── Main Layout Workspace ─────────────────────────────────── */}
-      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1 flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
-        {/* ── Sidebar (Desktop) ────────────────────────────────────── */}
-        <aside className="hidden lg:flex flex-col w-64 shrink-0 sticky top-28">
-          <div className="w-full rounded-3xl border border-white/10 bg-gradient-to-b from-card/90 via-card/70 to-card/50 backdrop-blur-2xl p-4 shadow-2xl shadow-black/40 relative overflow-hidden">
-            {/* Subtle top inner glow highlight line */}
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent pointer-events-none" />
-
-            {/* Sidebar Section Title */}
-            <div className="px-3 pt-2 pb-3 flex items-center justify-between border-b border-white/5 mb-3">
-              <span className="text-[11px] font-bold font-heading uppercase tracking-wider text-muted-foreground">
-                {language === "ar" ? "بوابة الإدارة الموحدة" : "COMMAND MODULES"}
-              </span>
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-            </div>
-
-            {/* Navigation Links */}
-            <nav className="flex flex-col gap-1.5">
-              {navItems.map((item) => {
-                const Icon = item.icon
-                const isActive =
-                  item.end
-                    ? location.pathname === item.to
-                    : location.pathname.startsWith(item.to)
-
-                return (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    end={item.end}
-                    className={`flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 group relative ${
-                      isActive
-                        ? "bg-gradient-to-r from-primary to-accent text-white shadow-lg shadow-primary/30 font-extrabold"
-                        : "text-muted-foreground hover:text-white hover:bg-white/[0.04]"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
-                          isActive
-                            ? "bg-white/20 text-white"
-                            : "bg-white/5 text-muted-foreground group-hover:text-primary group-hover:bg-primary/10"
-                        }`}
-                      >
-                        <Icon className="w-4 h-4" />
-                      </div>
-                      <span className="tracking-tight">
-                        {language === "ar" ? item.label_ar : item.label_en}
-                      </span>
-                    </div>
-
-                    <ArrowIcon
-                      className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                        isActive
-                          ? "opacity-100 translate-x-0"
-                          : "opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0"
-                      }`}
-                    />
-                  </NavLink>
-                )
-              })}
-            </nav>
-
-            {/* Sidebar Footer Live Status */}
-            <div className="mt-5 pt-3.5 border-t border-white/5 px-3">
-              <div className="flex items-center justify-between text-[11px] text-muted-foreground font-mono">
-                <span>{language === "ar" ? "حالة النظام" : "System Status"}</span>
-                <span className="text-emerald-400 font-bold flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  {language === "ar" ? "تشغيل طبيعي" : "Operational"}
-                </span>
+      {/* ── Workspace Body ─────────────────────────────────────────────── */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Desktop Sidebar */}
+        <aside className="hidden md:flex w-64 flex-col justify-between border-e border-white/10 bg-[#081628]/95 p-4 shrink-0 shadow-xl">
+          <div className="space-y-6">
+            {/* Admin Brand Telemetry Badge */}
+            <div className="p-3.5 rounded-2xl border border-white/10 bg-card/60 backdrop-blur-md shadow-inner">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-secondary border border-primary/30 font-bold">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-xs font-bold text-white truncate">
+                    {user?.name || L("مدير النظام", "System Admin")}
+                  </div>
+                  <div className="text-[11px] text-muted-foreground truncate flex items-center gap-1.5 mt-0.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse" />
+                    <span>{L("النظام: تشغيل طبيعي", "Core Engine: Online")}</span>
+                  </div>
+                </div>
               </div>
             </div>
+
+            {/* Navigation Menu — grouped sections */}
+            <nav className="space-y-4">
+              {navSections.map((section) => (
+                <div key={section.title} className="space-y-1">
+                  <div className="px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">
+                    {section.title}
+                  </div>
+                  {section.items.map((item) => {
+                    const Icon = item.icon
+                    return (
+                      <NavLink
+                        key={item.to}
+                        to={item.to}
+                        end={item.end}
+                        className={({ isActive }) =>
+                          `group flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all ${
+                            isActive
+                              ? "bg-gradient-to-r from-primary/25 to-secondary/15 text-white border border-primary/40 shadow-md shadow-primary/10"
+                              : "text-muted-foreground hover:text-white hover:bg-card/50 hover:border hover:border-white/5"
+                          }`
+                        }
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <Icon className="w-4 h-4 shrink-0 transition-transform group-hover:scale-110" />
+                          <span>{item.label}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          {item.badge && (
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${item.badge.color}`}>
+                              {item.badge.count}
+                            </span>
+                          )}
+                          <ChevronIcon className="w-3 h-3 opacity-30 group-hover:opacity-80 transition-opacity" />
+                        </div>
+                      </NavLink>
+                    )
+                  })}
+                </div>
+              ))}
+            </nav>
+          </div>
+
+          {/* Sidebar Footer — Sign Out */}
+          <div className="pt-4 border-t border-white/10 space-y-2">
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all cursor-pointer"
+            >
+              <LogOut className="w-4 h-4 shrink-0" />
+              <span>{L("تسجيل الخروج", "Sign Out")}</span>
+            </button>
           </div>
         </aside>
 
-        {/* ── Mobile Sidebar Drawer ─────────────────────────────────── */}
+        {/* Mobile Navigation Drawer */}
         {mobileOpen && (
-          <div className="fixed inset-0 z-50 lg:hidden bg-black/80 backdrop-blur-md flex flex-col justify-end p-4">
-            <div className="bg-card border border-white/10 rounded-3xl p-5 shadow-2xl space-y-3 max-h-[85vh] overflow-y-auto animate-in slide-in-from-bottom duration-300">
-              <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                <span className="text-sm font-bold text-white font-heading">
-                  {language === "ar" ? "قائمة الإدارة" : "Admin Menu"}
-                </span>
+          <div className="fixed inset-0 z-50 md:hidden">
+            <div
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm"
+              onClick={() => setMobileOpen(false)}
+            />
+            <div
+              className={`fixed top-0 bottom-0 ${
+                isRTL ? "right-0" : "left-0"
+              } w-72 bg-[#081628] border-r border-white/10 p-5 flex flex-col justify-between shadow-2xl z-10 overflow-y-auto`}
+            >
+              <div className="space-y-6">
+                <div className="flex items-center justify-between pb-4 border-b border-white/10">
+                  <span className="font-heading font-black text-white text-base">
+                    FAEDA <span className="text-secondary">ADMIN</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setMobileOpen(false)}
+                    className="p-1 rounded-lg text-muted-foreground hover:text-white hover:bg-card"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <nav className="space-y-4">
+                  {navSections.map((section) => (
+                    <div key={section.title} className="space-y-1">
+                      <div className="px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">
+                        {section.title}
+                      </div>
+                      {section.items.map((item) => {
+                        const Icon = item.icon
+                        return (
+                          <NavLink
+                            key={item.to}
+                            to={item.to}
+                            end={item.end}
+                            onClick={() => setMobileOpen(false)}
+                            className={({ isActive }) =>
+                              `flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                                isActive
+                                  ? "bg-primary/20 text-secondary border border-primary/30"
+                                  : "text-muted-foreground hover:text-white hover:bg-card/50"
+                              }`
+                            }
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <Icon className="w-4 h-4 shrink-0" />
+                              <span>{item.label}</span>
+                            </div>
+                            {item.badge && (
+                              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${item.badge.color}`}>
+                                {item.badge.count}
+                              </span>
+                            )}
+                          </NavLink>
+                        )
+                      })}
+                    </div>
+                  ))}
+                </nav>
+              </div>
+
+              <div className="pt-4 border-t border-white/10">
                 <button
-                  onClick={() => setMobileOpen(false)}
-                  className="p-1.5 rounded-xl text-muted-foreground hover:text-white bg-white/5"
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10"
                 >
-                  <X className="w-4 h-4" />
+                  <LogOut className="w-4 h-4" />
+                  <span>{L("تسجيل الخروج", "Sign Out")}</span>
                 </button>
               </div>
-
-              <div className="space-y-1.5">
-                {navItems.map((item) => {
-                  const Icon = item.icon
-                  const isActive =
-                    item.end
-                      ? location.pathname === item.to
-                      : location.pathname.startsWith(item.to)
-
-                  return (
-                    <NavLink
-                      key={item.to}
-                      to={item.to}
-                      end={item.end}
-                      onClick={() => setMobileOpen(false)}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold transition-all ${
-                        isActive
-                          ? "bg-primary text-white shadow-lg shadow-primary/30"
-                          : "text-muted-foreground hover:text-white hover:bg-white/5"
-                      }`}
-                    >
-                      <Icon className="w-4 h-4" />
-                      <span>{language === "ar" ? item.label_ar : item.label_en}</span>
-                    </NavLink>
-                  )
-                })}
-              </div>
-
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs font-bold mt-4"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>{language === "ar" ? "تسجيل الخروج" : "Logout"}</span>
-              </button>
             </div>
           </div>
         )}
 
-        {/* ── Main Content Area ─────────────────────────────────────── */}
-        <main className="flex-1 w-full min-w-0">
-          <Outlet />
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-y-auto bg-background p-4 md:p-8">
+          <div className="mx-auto max-w-7xl">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>
