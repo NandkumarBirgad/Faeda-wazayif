@@ -40,11 +40,11 @@ export function Navbar() {
       <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
         
         {/* Official Faeda White Brand Logo */}
-        <Link to="/" className="flex items-center gap-3 group">
+        <Link to="/" className="flex items-center gap-3 group shrink-0 py-1">
           <img
             src={faedaWhiteLogo}
             alt="Faeda Jobs Logo"
-            className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            className="h-12 sm:h-14 lg:h-16 w-auto max-h-[64px] object-contain transition-all duration-300 group-hover:scale-105 drop-shadow-[0_2px_12px_rgba(255,255,255,0.15)]"
           />
         </Link>
 
