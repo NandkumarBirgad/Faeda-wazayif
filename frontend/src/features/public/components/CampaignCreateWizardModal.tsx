@@ -27,11 +27,15 @@ import {
   Target,
   Rocket,
   ExternalLink,
+  DollarSign,
+  TrendingUp,
+  AlertCircle,
 } from "lucide-react"
 import {
   ACCOUNT_POST_TYPES,
   type CreatePostDTO,
   type CampaignAudience,
+  type BudgetType,
 } from "../types/posts.types"
 import { useTranslation } from "@/i18n"
 import { useAuthStore } from "@/store/auth.store"
@@ -81,8 +85,8 @@ export function CampaignCreateWizardModal({
     initialAccountType || detectedRole
   )
 
-  // Current wizard step (1 to 5)
-  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4 | 5>(1)
+  // Current wizard step (1 to 6)
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4 | 5 | 6>(1)
 
   // Form State
   const [selectedPostType, setSelectedPostType] = useState<string>(
@@ -119,6 +123,27 @@ export function CampaignCreateWizardModal({
     "الرياض",
     "جميع مناطق المملكة",
   ])
+
+  // ── Budget State ──
+  const [budgetType, setBudgetType] = useState<BudgetType>("free")
+  const [totalBudget, setTotalBudget] = useState<string>("")
+  const [dailyBudget, setDailyBudget] = useState<string>("")
+  const [currency] = useState("SAR")
+  const [durationDays, setDurationDays] = useState<string>("7")
+
+  // Derived: estimated proposed reach (never guaranteed)
+  const computedReach = (() => {
+    const tb = parseFloat(totalBudget) || 0
+    const db = parseFloat(dailyBudget) || 0
+    const days = parseInt(durationDays) || 1
+    const numRoles = targetRoles.length
+    const numLocs = selectedLocations.length
+    const breadth = Math.max(1, (numRoles + numLocs) * 0.5)
+    const effective = tb + db * days
+    const mult = effective > 0 ? 1 + effective / 500 : 1
+    const est = Math.round(5000 * breadth * mult)
+    return { min: Math.max(100, Math.round(est * 0.7)), max: Math.round(est * 1.4) }
+  })()
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -183,7 +208,18 @@ export function CampaignCreateWizardModal({
       )
       return
     }
-    if (currentStep < 5) {
+    // Budget validation for non-free budgets
+    if (currentStep === 5) {
+      if (budgetType === "total" && (!totalBudget || parseFloat(totalBudget) <= 0)) {
+        toast.error(language === "ar" ? "يرجى إدخال إجمالي الميزانية" : "Please enter a valid total budget")
+        return
+      }
+      if (budgetType === "daily" && (!dailyBudget || parseFloat(dailyBudget) <= 0)) {
+        toast.error(language === "ar" ? "يرجى إدخال الميزانية اليومية" : "Please enter a valid daily budget")
+        return
+      }
+    }
+    if (currentStep < 6) {
       setCurrentStep((prev) => (prev + 1) as any)
     }
   }
@@ -239,6 +275,12 @@ export function CampaignCreateWizardModal({
             : accountType === "company"
             ? "شركة وطنية رائدة"
             : "مهندس برمجيات متميز"),
+        // ── Budget fields ──
+        budgetType,
+        totalBudget: budgetType !== "free" && totalBudget ? parseFloat(totalBudget) : null,
+        dailyBudget: budgetType === "daily" && dailyBudget ? parseFloat(dailyBudget) : null,
+        currency,
+        durationDays: durationDays ? parseInt(durationDays) : null,
       }
 
       onSuccess(dto)
@@ -340,13 +382,14 @@ export function CampaignCreateWizardModal({
             </div>
 
             {/* Stepper Wizard Bar */}
-            <div className="grid grid-cols-5 gap-2 pt-2">
+            <div className="grid grid-cols-6 gap-2 pt-2">
               {[
-                { step: 1, label: language === "ar" ? "التصنيف والهدف" : "Category" },
-                { step: 2, label: language === "ar" ? "المحتوى والهدف" : "Content" },
-                { step: 3, label: language === "ar" ? "الوسائط والفيديو" : "Media" },
-                { step: 4, label: language === "ar" ? "الجمهور المستهدف" : "Targeting" },
-                { step: 5, label: language === "ar" ? "المعاينة والنشر" : "Publish" },
+                { step: 1, label: language === "ar" ? "التصنيف" : "Category" },
+                { step: 2, label: language === "ar" ? "المحتوى" : "Content" },
+                { step: 3, label: language === "ar" ? "الوسائط" : "Media" },
+                { step: 4, label: language === "ar" ? "الجمهور" : "Audience" },
+                { step: 5, label: language === "ar" ? "الميزانية" : "Budget" },
+                { step: 6, label: language === "ar" ? "النشر" : "Publish" },
               ].map((s) => (
                 <div
                   key={s.step}
@@ -769,8 +812,131 @@ export function CampaignCreateWizardModal({
               </div>
             )}
 
-            {/* ── STEP 5: Live Preview & Publish ── */}
+            {/* ── STEP 5: Budget & Proposed Reach ── */}
             {currentStep === 5 && (
+              <div className="space-y-5">
+                <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 space-y-1">
+                  <h4 className="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
+                    <DollarSign className="w-4 h-4 text-amber-400" />
+                    <span>{language === "ar" ? "الميزانية والوصول المقدر" : "Budget & Estimated Reach"}</span>
+                  </h4>
+                  <p className="text-[11px] text-amber-200/70">
+                    {language === "ar"
+                      ? "الميزانية اختيارية. الوصول المعروض تقديري فقط وليس مضموناً."
+                      : "Budget is optional. Displayed reach is an estimate only — not guaranteed."}
+                  </p>
+                </div>
+
+                {/* Budget Type */}
+                <div>
+                  <label className="text-xs font-bold text-slate-300 block mb-2">
+                    {language === "ar" ? "نوع الميزانية" : "Budget Type"}
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([
+                      { key: "free", label: language === "ar" ? "بدون ميزانية" : "No Budget", desc: language === "ar" ? "نشر مجاني" : "Free publish" },
+                      { key: "total", label: language === "ar" ? "ميزانية إجمالية" : "Total Budget", desc: language === "ar" ? "مبلغ ثابت" : "Fixed amount" },
+                      { key: "daily", label: language === "ar" ? "ميزانية يومية" : "Daily Budget", desc: language === "ar" ? "يومياً × المدة" : "Per day × duration" },
+                    ] as { key: BudgetType; label: string; desc: string }[]).map((bt) => (
+                      <button
+                        key={bt.key}
+                        type="button"
+                        onClick={() => setBudgetType(bt.key)}
+                        className={`p-3 rounded-xl border text-start text-xs transition-all ${
+                          budgetType === bt.key
+                            ? "bg-amber-500/20 border-amber-500 text-white"
+                            : "bg-white/5 border-white/5 text-muted-foreground hover:text-white"
+                        }`}
+                      >
+                        <span className="font-bold block">{bt.label}</span>
+                        <span className="text-[10px] opacity-70">{bt.desc}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Budget Amount inputs */}
+                {budgetType !== "free" && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {budgetType === "total" && (
+                      <div>
+                        <label className="text-xs font-bold text-slate-300 block mb-1">
+                          {language === "ar" ? "إجمالي الميزانية (SAR) *" : "Total Budget (SAR) *"}
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={totalBudget}
+                          onChange={(e) => setTotalBudget(e.target.value)}
+                          placeholder="1000"
+                          className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                        />
+                      </div>
+                    )}
+                    {budgetType === "daily" && (
+                      <>
+                        <div>
+                          <label className="text-xs font-bold text-slate-300 block mb-1">
+                            {language === "ar" ? "الميزانية اليومية (SAR) *" : "Daily Budget (SAR) *"}
+                          </label>
+                          <input
+                            type="number"
+                            min="0"
+                            value={dailyBudget}
+                            onChange={(e) => setDailyBudget(e.target.value)}
+                            placeholder="100"
+                            className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-bold text-slate-300 block mb-1">
+                            {language === "ar" ? "مدة الحملة (أيام)" : "Duration (days)"}
+                          </label>
+                          <input
+                            type="number"
+                            min="1"
+                            max="90"
+                            value={durationDays}
+                            onChange={(e) => setDurationDays(e.target.value)}
+                            className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {/* Proposed Reach Card (always labeled as ESTIMATE) */}
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-amber-200 flex items-center gap-1.5">
+                      <TrendingUp className="w-4 h-4 text-amber-400" />
+                      {language === "ar" ? "الوصول المقدر / المتوقع" : "Estimated / Proposed Reach"}
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase">
+                      {language === "ar" ? "تقديري" : "Estimate"}
+                    </span>
+                  </div>
+                  <div className="text-2xl sm:text-3xl font-black text-amber-200 font-mono">
+                    {computedReach.min.toLocaleString()} — {computedReach.max.toLocaleString()}
+                    <span className="text-xs font-normal text-amber-200/60 ms-2">
+                      {language === "ar" ? "مستخدم" : "users"}
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-1.5">
+                    <AlertCircle className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                    <p className="text-[11px] text-amber-200/60">
+                      {language === "ar"
+                        ? "الأرقام تقديرية تحسب من الميزانية وعدد الفئات والمناطق المستهدفة. الوصول الفعلي يختلف ويُقاس بعد النشر."
+                        : "Numbers are estimates calculated from budget, target roles & locations. Actual reach is measured post-publish."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ── STEP 6: Live Preview & Publish ── */}
+            {currentStep === 6 && (
               <div className="space-y-4">
                 <div className="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
@@ -842,6 +1008,20 @@ export function CampaignCreateWizardModal({
                       </div>
                     </div>
                   )}
+
+                  {/* Budget & Estimated Reach summary in preview */}
+                  <div className="pt-2 border-t border-white/5 flex flex-wrap items-center gap-2">
+                    {budgetType !== "free" && (
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/20">
+                        💰 {budgetType === "total"
+                          ? `${parseFloat(totalBudget || "0").toLocaleString()} ${currency}`
+                          : `${parseFloat(dailyBudget || "0").toLocaleString()} ${currency}/${language === "ar" ? "يوم" : "day"} × ${durationDays} ${language === "ar" ? "يوم" : "days"}`}
+                      </span>
+                    )}
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/15">
+                      📊 {language === "ar" ? "الوصول المقدر (تقديري):" : "Est. Reach:"} {computedReach.min.toLocaleString()}–{computedReach.max.toLocaleString()}
+                    </span>
+                  </div>
                 </div>
               </div>
             )}
@@ -871,7 +1051,7 @@ export function CampaignCreateWizardModal({
                 {language === "ar" ? "إلغاء" : "Cancel"}
               </button>
 
-              {currentStep < 5 ? (
+              {currentStep < 6 ? (
                 <button
                   type="button"
                   onClick={handleNext}

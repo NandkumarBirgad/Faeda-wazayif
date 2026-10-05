@@ -40,16 +40,26 @@ class Campaign(db.Model):
     min_salary = db.Column(db.Integer, nullable=True)
     max_salary = db.Column(db.Integer, nullable=True)
     tags = db.Column(db.String(500), nullable=True)
-    
+
+    # ── Budget & Proposed Reach ────────────────────────────────────────────
+    budget_type = db.Column(db.String(50), nullable=True)       # 'total' | 'daily' | 'free'
+    total_budget = db.Column(db.Float, nullable=True)            # SAR amount
+    daily_budget = db.Column(db.Float, nullable=True)            # SAR/day (optional)
+    currency = db.Column(db.String(10), default='SAR')           # ISO 4217
+    campaign_duration_days = db.Column(db.Integer, nullable=True) # integer days
+    # proposed_reach: ESTIMATED, never guaranteed — calculated from budget + targeting
+    proposed_reach_min = db.Column(db.Integer, nullable=True)
+    proposed_reach_max = db.Column(db.Integer, nullable=True)
+
     status = db.Column(db.String(50), default='active')
     outreach_template = db.Column(db.Text, nullable=True)
-    
+
     author_name = db.Column(db.String(150), nullable=True)
     author_title = db.Column(db.String(200), nullable=True)
     author_avatar = db.Column(db.String(500), nullable=True)
     author_username = db.Column(db.String(100), nullable=True)
     is_verified = db.Column(db.Boolean, default=True)
-    
+
     start_date = db.Column(db.DateTime, default=datetime.utcnow)
     end_date = db.Column(db.DateTime, nullable=True)
     
@@ -198,6 +208,20 @@ class Campaign(db.Model):
             "start_date": self.start_date.isoformat() if self.start_date else None,
             "end_date": self.end_date.isoformat() if self.end_date else None,
             "created_at": self.created_at.isoformat() if self.created_at else None,
+            # ── Budget & Estimated Reach (clearly labeled as ESTIMATES) ──
+            "budget": {
+                "budgetType": self.budget_type or "free",
+                "totalBudget": self.total_budget,
+                "dailyBudget": self.daily_budget,
+                "currency": self.currency or "SAR",
+                "durationDays": self.campaign_duration_days,
+            },
+            "proposedReach": {
+                "isEstimate": True,                  # ← always True — never guarantee
+                "label": "الوصول المقدر/المتوقع (تقديري)",
+                "min": self.proposed_reach_min,
+                "max": self.proposed_reach_max,
+            },
         }
 
         # Candidate recruitment funnel stats (for company panel)
@@ -249,6 +273,29 @@ class Campaign(db.Model):
             "campaign_id": self.id,
             "title": self.title,
             "created_at": self.created_at.isoformat() if self.created_at else None,
+            # ── ACTUAL metrics (real database counts) ──
+            "actual": {
+                "views": views_cnt,
+                "likes": likes_cnt,
+                "comments": comments_cnt,
+                "shares": shares_cnt,
+                "saves": saves_cnt,
+                "total_engagements": total_engagements,
+                "engagement_rate": engagement_rate,
+            },
+            # ── ESTIMATED / PROPOSED reach (budget-based, labeled as estimate) ──
+            "estimated": {
+                "isEstimate": True,
+                "label": "الوصول المقدر/المتوقع (تقديري وليس مضموناً)",
+                "proposedReachMin": self.proposed_reach_min,
+                "proposedReachMax": self.proposed_reach_max,
+                "budgetType": self.budget_type or "free",
+                "totalBudget": self.total_budget,
+                "dailyBudget": self.daily_budget,
+                "currency": self.currency or "SAR",
+                "durationDays": self.campaign_duration_days,
+            },
+            # backward-compat flat fields
             "views": views_cnt,
             "likes": likes_cnt,
             "comments": comments_cnt,

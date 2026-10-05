@@ -237,6 +237,60 @@ export function CampaignAnalyticsModal({
                   </div>
                 </div>
 
+                {/* ── Estimated / Proposed Reach Section (labeled clearly as ESTIMATE) */}
+                {data.estimated && (data.estimated.proposedReachMin || data.estimated.proposedReachMax || data.estimated.totalBudget) && (
+                  <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-wide">
+                        {language === "ar" ? "تقديري — غير مضمون" : "Estimate — Not Guaranteed"}
+                      </span>
+                      <span className="text-xs font-bold text-amber-200">
+                        {language === "ar" ? "الوصول المقدر / المتوقع" : "Estimated / Proposed Reach"}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-amber-200/70">
+                      {language === "ar"
+                        ? "هذه الأرقام تقديرية فقط محسوبة من الميزانية والاستهداف. الوصول الفعلي يظهر في قسم 'المشاهدات الحقيقية' أعلاه."
+                        : "These figures are estimates only, calculated from budget & targeting. Actual reach is shown in 'Views' above."}
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {(data.estimated.proposedReachMin != null || data.estimated.proposedReachMax != null) && (
+                        <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 space-y-0.5">
+                          <span className="text-[11px] text-amber-300 font-semibold block">
+                            {language === "ar" ? "الوصول المتوقع" : "Proposed Reach"}
+                          </span>
+                          <span className="text-lg font-black text-amber-200 font-mono">
+                            {data.estimated.proposedReachMin?.toLocaleString()}
+                            {" — "}
+                            {data.estimated.proposedReachMax?.toLocaleString()}
+                          </span>
+                        </div>
+                      )}
+                      {data.estimated.totalBudget != null && (
+                        <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 space-y-0.5">
+                          <span className="text-[11px] text-amber-300 font-semibold block">
+                            {language === "ar" ? "إجمالي الميزانية" : "Total Budget"}
+                          </span>
+                          <span className="text-lg font-black text-amber-200 font-mono">
+                            {data.estimated.totalBudget.toLocaleString()} {data.estimated.currency || "SAR"}
+                          </span>
+                        </div>
+                      )}
+                      {data.estimated.dailyBudget != null && (
+                        <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 space-y-0.5">
+                          <span className="text-[11px] text-amber-300 font-semibold block">
+                            {language === "ar" ? "الميزانية اليومية" : "Daily Budget"}
+                          </span>
+                          <span className="text-lg font-black text-amber-200 font-mono">
+                            {data.estimated.dailyBudget.toLocaleString()} {data.estimated.currency || "SAR"}/
+                            {language === "ar" ? "يوم" : "day"}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* Recent Interaction Feeds */}
                 <div className="space-y-4 pt-2">
                   <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
@@ -260,7 +314,7 @@ export function CampaignAnalyticsModal({
                           >
                             <span className="text-white font-medium">{rc.author}</span>
                             <span className="text-slate-300 truncate max-w-[200px] text-[11px]">
-                              "{rc.content}"
+                              &ldquo;{rc.content}&rdquo;
                             </span>
                             <span className="text-[10px] text-muted-foreground">{rc.time}</span>
                           </div>

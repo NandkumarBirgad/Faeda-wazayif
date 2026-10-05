@@ -410,6 +410,51 @@ def create_campaign_post():
     else:
         tags_str = str(tags)
 
+    # ── Budget Fields (optional) ──
+    budget_type = (data.get('budgetType') or data.get('budget_type') or 'free').strip()
+    total_budget = data.get('totalBudget') or data.get('total_budget')
+    daily_budget = data.get('dailyBudget') or data.get('daily_budget')
+    currency = (data.get('currency') or 'SAR').strip().upper()
+    duration_days = data.get('durationDays') or data.get('campaign_duration_days')
+
+    # Validate budgets
+    if total_budget is not None:
+        try:
+            total_budget = float(total_budget)
+            if total_budget < 0:
+                total_budget = 0.0
+        except (ValueError, TypeError):
+            total_budget = None
+
+    if daily_budget is not None:
+        try:
+            daily_budget = float(daily_budget)
+            if daily_budget < 0:
+                daily_budget = 0.0
+        except (ValueError, TypeError):
+            daily_budget = None
+
+    if duration_days is not None:
+        try:
+            duration_days = int(duration_days)
+            if duration_days < 1:
+                duration_days = 1
+        except (ValueError, TypeError):
+            duration_days = None
+
+    # ── Estimated / Proposed Reach Calculation (NEVER guaranteed, always labeled as estimate) ──
+    # Formula: Base audience pool * targeting_factor * budget_multiplier
+    # This is a rough estimate — clearly marked as isEstimate=True in the model
+    base_pool = 5000  # platform audience baseline
+    num_roles = len([r for r in (target_roles_str or "").split(",") if r.strip()])
+    num_locs = len([l for l in (target_locs_str or "").split(",") if l.strip()])
+    targeting_breadth = max(1, (num_roles + num_locs) * 0.5)
+    effective_budget = (total_budget or 0) + ((daily_budget or 0) * (duration_days or 1))
+    budget_multiplier = 1.0 + (effective_budget / 500.0) if effective_budget > 0 else 1.0
+    est_reach = int(base_pool * targeting_breadth * budget_multiplier)
+    proposed_reach_min = max(100, int(est_reach * 0.7))
+    proposed_reach_max = int(est_reach * 1.4)
+
     # Ownership bindings
     company_id = user_ctx['user_id'] if user_ctx['user_type'] == 'company' else None
     university_id = user_ctx['user_id'] if user_ctx['user_type'] == 'university' else None
@@ -455,7 +500,15 @@ def create_campaign_post():
         author_title=data.get('authorTitle') or user_ctx['title'],
         author_avatar=user_ctx['avatar'],
         author_username=user_ctx['username'],
-        is_verified=True
+        is_verified=True,
+        # ── Budget & Estimated Reach ──
+        budget_type=budget_type,
+        total_budget=total_budget,
+        daily_budget=daily_budget,
+        currency=currency,
+        campaign_duration_days=duration_days,
+        proposed_reach_min=proposed_reach_min,
+        proposed_reach_max=proposed_reach_max,
     )
 
     db.session.add(c)

@@ -773,6 +773,20 @@ class PostsService {
           accountType,
         },
         comments: [],
+        // budget fallback for offline
+        budget: dto.budgetType ? {
+          budgetType: dto.budgetType,
+          totalBudget: dto.totalBudget ?? null,
+          dailyBudget: dto.dailyBudget ?? null,
+          currency: dto.currency || "SAR",
+          durationDays: dto.durationDays ?? null,
+        } : undefined,
+        proposedReach: {
+          isEstimate: true,
+          label: "الوصول المقدر (تقديري)",
+          min: null,
+          max: null,
+        },
       }
       this.localArticles.unshift(created)
       return { success: true, post: created }

@@ -8,6 +8,27 @@
 
 export type AccountType = "all" | "university" | "company" | "candidate"
 
+// ── Budget types ──
+export type BudgetType = "free" | "total" | "daily"
+
+export interface BudgetConfig {
+  budgetType: BudgetType
+  totalBudget?: number | null
+  dailyBudget?: number | null
+  currency?: string      // default 'SAR'
+  durationDays?: number | null
+  startDate?: string
+  endDate?: string
+}
+
+/** Estimated/proposed reach — NEVER guaranteed, always labeled as estimate */
+export interface ProposedReach {
+  isEstimate: true        // always true — never mix with actual views
+  label: string           // e.g. "الوصول المقدر (تقديري)"
+  min?: number | null
+  max?: number | null
+}
+
 export type UniversityPostType =
   | "research_paper"
   | "job_fair"
@@ -369,6 +390,9 @@ export interface PostArticle {
   status?: string
   author: PostAuthor
   comments?: PostComment[]
+  // ── Budget & Estimated Reach ──
+  budget?: BudgetConfig
+  proposedReach?: ProposedReach
 }
 
 export interface NotificationItem {
@@ -395,6 +419,29 @@ export interface CampaignAnalyticsData {
   campaign_id: number
   title: string
   created_at?: string
+  // ── ACTUAL real metrics from DB ──
+  actual?: {
+    views: number
+    likes: number
+    comments: number
+    shares: number
+    saves: number
+    total_engagements: number
+    engagement_rate: number
+  }
+  // ── ESTIMATED/PROPOSED reach (budget-based, never guaranteed) ──
+  estimated?: {
+    isEstimate: true
+    label: string
+    proposedReachMin?: number | null
+    proposedReachMax?: number | null
+    budgetType?: string
+    totalBudget?: number | null
+    dailyBudget?: number | null
+    currency?: string
+    durationDays?: number | null
+  }
+  // backward-compat flat fields
   views: number
   likes: number
   comments: number
@@ -463,4 +510,12 @@ export interface CreatePostDTO {
   authorName?: string
   authorTitle?: string
   authorUsername?: string
+  // ── Budget (optional, flows to backend) ──
+  budgetType?: BudgetType
+  totalBudget?: number | null
+  dailyBudget?: number | null
+  currency?: string
+  durationDays?: number | null
+  startDate?: string
+  endDate?: string
 }

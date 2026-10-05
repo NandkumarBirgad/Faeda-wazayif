@@ -142,13 +142,28 @@ export function UserPublishedCampaignsSection({
               className="p-4 bg-card/40 border-white/5 hover:border-primary/30 rounded-2xl flex flex-col justify-between space-y-3 transition-all"
             >
               <div className="space-y-2.5">
-                {/* Header row with tags & video badge */}
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="px-2 py-0.5 rounded-md bg-white/10 text-primary font-bold text-[10px]">
-                    {camp.category}
-                  </span>
+                {/* Header row with tags, budget badge & video badge */}
+                <div className="flex items-center justify-between text-[11px] gap-2">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="px-2 py-0.5 rounded-md bg-white/10 text-primary font-bold text-[10px]">
+                      {camp.category}
+                    </span>
+                    {camp.budget && camp.budget.budgetType && (
+                      <span className={`px-2 py-0.5 rounded-md font-semibold text-[9px] ${
+                        camp.budget.budgetType === "free"
+                          ? "bg-slate-500/15 text-slate-300"
+                          : "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20"
+                      }`}>
+                        {camp.budget.budgetType === "free"
+                          ? (language === "ar" ? "حملة مجانية" : "Free Reach")
+                          : camp.budget.totalBudget
+                          ? `${Number(camp.budget.totalBudget).toLocaleString()} ${camp.budget.currency || "SAR"}`
+                          : `${Number(camp.budget.dailyBudget).toLocaleString()} ${camp.budget.currency || "SAR"}/${language === "ar" ? "يوم" : "day"}`}
+                      </span>
+                    )}
+                  </div>
                   {camp.mediaType === "video" && (
-                    <span className="px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 font-bold text-[9px] flex items-center gap-1">
+                    <span className="px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 font-bold text-[9px] flex items-center gap-1 shrink-0">
                       <Video className="w-2.5 h-2.5" />
                       <span>{language === "ar" ? "فيديو" : "Video"}</span>
                     </span>
